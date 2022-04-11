@@ -1,0 +1,7 @@
+[user]
+	name = m
+	email = mike@mikewrig.ht
+[core]
+	autocrlf = input
+[init]
+	defaultBranch = main
