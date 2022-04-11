@@ -1,0 +1,54 @@
+# source /opt/homebrew/bin/env_parallel.zsh
+
+
+export MK_SCRIPTS="$DOCSFLDR/scripts"
+
+path_array=(
+  "$MK_SCRIPTS"/util
+  "$MK_SCRIPTS"/learning
+  /opt/homebrew/opt/texinfo/bin
+  /Users/m/.cargo/bin
+  /Users/m/.sdkman/candidates/gradle/current/bin/
+  /opt/homebrew/opt/ruby/bin
+  /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin
+  /opt/homebrew/opt/tcl-tk/bin
+  "$PATH"
+)
+
+export PATH=${(j.:.)path_array}
+
+# echo $PATH
+
+
+zsh_rc_folder="$MK_SCRIPTS"/rc/zsh
+
+function source_up_R () {
+  local current_path="$1"
+  gls -lhAF "$current_path" | while IFS= read -r line; do 
+    case "${line[-1]}" in
+      '*')
+        local filename="${${line##* }%%\*}"
+        source "$current_path"/$filename
+        ;;
+      '/')
+        local dirrr="${${line##* }%%/}"
+        source_up_R "$current_path"/$dirrr
+        ;;
+    esac
+  done
+}
+
+
+
+source_up_R "$zsh_rc_folder"
+
+
+
+
+# The next line updates PATH for the Google Cloud SDK.
+# if [ -f '/Users/m/b/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/m/b/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+# if [ -f '/Users/m/b/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/m/b/google-cloud-sdk/completion.zsh.inc'; fi
+
+# test -e /Users/m/.iterm2_shell_integration.zsh && source /Users/m/.iterm2_shell_integration.zsh || true

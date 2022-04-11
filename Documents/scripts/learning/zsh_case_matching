@@ -1,0 +1,14 @@
+#! /bin/zsh
+
+function checkMatch(){
+    case $1 in
+        <->)
+            echo "$1 is number"
+            ;;
+        *)
+            echo "$1 went to default."
+    esac
+}
+
+checkMatch 2
+

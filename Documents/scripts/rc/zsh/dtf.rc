@@ -1,0 +1,21 @@
+
+
+# Dotfiles config shortcuts
+alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
+alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
+alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r main --name-only"
+
+
+
+
+
+
+
+
+
+
+
+
+
+

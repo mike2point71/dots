@@ -1,0 +1,12 @@
+alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
+alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123'
+
+function killport() {
+  [ -z ${1:+x} ] || {
+    lsof -n "-i4TCP:${1}" | 
+    grep LISTEN | 
+    tr -s ' ' | 
+    cut -f 2 -d ' ' | 
+    xargs kill -9
+  }
+}

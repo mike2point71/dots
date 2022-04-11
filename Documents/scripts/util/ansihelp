@@ -1,0 +1,54 @@
+#! /bin/sh
+
+echo 'Write the escape sequence as \\033[0m or if multiple formats \\033[1;2;3;4;5m'
+echo "NOTE:  I'm pretty sure 1;2;3;4;5 would not work.  Let's see..."
+echo '\033[1;2;3;4;5m TEST OF 1;2;3;4;5 format\033[0m'
+echo '...ok thats not ridiculous\n\n'
+
+echo 'use a single backslash in single quotes and a double backslash if doublequoting or naked'
+
+echo "\\033[0m0 makes things normal again.\\033[0m"
+echo "\\033[1m1 makes things bold.\\033[0m"
+echo "\\033[2m2 makes things faint.\\033[0m"
+echo "\\033[1;2m1 and 2 makes things...  thick but drab?\\033[0m"
+echo "\\033[2;1m2 and 1 is consistent on my machine 🤷‍♂️\\033[0m"
+echo "\\033[3m3 makes things italic.\\033[0m"
+echo "\\033[4m4 makes things underlined.\\033[0m"
+echo "\\033[5m5 makes things slow bllink.\\033[0m"
+echo "\\033[6m6 makes things fast blink.\\033[0m"
+echo "\\033[7m7 makes things backwards. (inconsistent implementation)\\033[0m"
+echo "\\033[8m8 makes things hide. (not widely supported)\\033[0m"
+echo "\\033[9m9 makes things crossed-out.\\033[0m"
+echo "\\033[21m21 makes things double-underlined or bold off.\\033[0m"
+echo "\\033[51m51 makes things framed.\\033[0m"
+echo "\\033[52m52 makes things encircled.\\033[0m"
+echo "\\033[53m53 makes things overlined.\\033[0m"
+echo "\\033[73m73 makes things superscript.\\033[0m"
+echo "\\033[74m74 makes things subscript.\\033[0m"
+# echo "\\033[3m3 makes things italic.\\033[0m"
+# echo "\\033[3m3 makes things italic.\\033[0m"
+# echo "\\033[3m3 makes things italic.\\033[0m"
+
+echo '\n\n10 through 19 changes font.  This sounds exciting...'
+function font_demo(){
+    echo "\\033[${1}mThis is font ${1}. abcdefghijklmnopqrstuvwxyz ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+}
+i=10
+while [ $i -le 19 ]; do
+    font_demo $i
+    i=$((i+1))
+done
+echo 'That did nothing on Kitty on my macbook'
+
+
+echo '\n\nCOLORS!!'
+colortable
+
+echo \n\n"Try colortable ';1'"
+
+# echo '\n\nCOLORS INVERTED!!'
+# colortable ';7'
+
+
+
+

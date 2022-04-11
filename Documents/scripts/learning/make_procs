@@ -1,0 +1,10 @@
+#! /bin/sh
+
+procfi=${1:-$(mktemp)}
+
+tf="$(mktemp)"
+procs -l >"$tf"
+
+gtail --lines=+2 "$tf" | tr -d ' ' | while IFS= read -r line; do
+    printf '\n\n[[columns]]\nkind = "%s"\nstyle = "BrightYellow|Yellow"\nnumeric_search = false\nnonnumeric_search = true\nalign = "Left"' "${line%%:*}" | gtee -a "$procfi"
+done

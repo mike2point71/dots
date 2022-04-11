@@ -1,0 +1,43 @@
+#! /bin/zsh
+
+echo '     -----NAKED-----'
+echo 0
+echo @
+echo #
+echo *
+echo '     -----DOLLAR-NAKED-----'
+echo $0
+echo $@
+echo $#
+echo $*
+echo '\n\n     -----QUOTED-----'
+echo "0=   0"
+echo "@=   @"
+echo "#=   #"
+echo "*=   *"
+echo '\n\n     -----DOLLAR-QUOTED-----'
+echo "\$0=   $0"
+echo "\$@=   $@"
+echo "\$#=   $#"
+echo "\$*=   $*"
+echo '\n\n     -----BRACKET-NAKED-----'
+echo 'skipped because all error'
+# echo [0]     no matches found: [0]
+# echo [@]
+# echo [#]
+# echo [*]
+echo '\n\n     -----BRACKET-QUOTED-----'
+echo "[0]=   [0]"
+echo "[@]=   [@]"
+echo "[#]=   [#]"
+echo "[*]=   [*]"
+echo '\n\n     -----BRACKET-DOLLAR-NAKED-----'
+echo '$[0]' $[0]
+# echo $[@]     bad math expression: illegal character: @
+echo '$[#]' $[#]
+# echo $[*]      bad math expression: operand expected at `*'
+echo '\n\n     -----BRACKET-DOLLAR-QUOTED-----'
+echo "\$[0]=   $[0]"
+# echo "\$[@]=   $[@]"     bad math expression: illegal character: @
+echo "\$[#]=   $[#]"
+# echo "\$[*]=   $[*]"     bad math expression: operand expected at `*'

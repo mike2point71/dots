@@ -1,0 +1,2 @@
+export NEO4J_HOME='/Users/m/.neo4j'
+export NEO4J_CONF='/Users/m/.neo4j/conf'

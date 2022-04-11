@@ -1,0 +1,8 @@
+#! /bin/sh
+
+next_url='https://ports.macports.org/api/v1/ports/'
+
+until [ -z ${next_url:+x} ]; do
+    curl "$next_url" | pee jq -rc ''
+done
+

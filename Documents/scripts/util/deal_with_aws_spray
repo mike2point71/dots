@@ -1,0 +1,15 @@
+#! /bin/sh
+
+
+
+# yq -C -P e -
+
+# tf=$(mktemp)
+
+# jq -c '.' > $tf
+
+# cat $tf | jq '.' | yq -CP e - 
+
+#| while IFS= read -r line; do
+#    echo $line
+# done

@@ -1,0 +1,3 @@
+alias gcam='git commit -am'
+alias gp='git pull'
+alias gpo='git push origin'

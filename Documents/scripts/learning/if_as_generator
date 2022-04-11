@@ -1,0 +1,6 @@
+#! /bin/sh
+
+three='three'
+if [ 'three' = "$three" ]; then echo 3; else echo 4; fi | xargs echo
+four='four'
+if [ 'three' = "$four"  ]; then echo 3; else echo 4; fi | xargs echo

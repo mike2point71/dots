@@ -1,0 +1,92 @@
+#! /bin/sh
+
+# operator_thing='&&'
+
+# [ 'dog' = 'dog' ] && echo "Should see this"
+# [ 'dog' = 'cat' ] && echo "Should not see this"
+# echo "[ 'dog' = 'dog' ]    $operator_thing echo 'Should see this'"
+# echo "[ 'dog' = 'cat' ]    $operator_thing echo 'Should not see this'"
+
+# echo "[ 'dog' = 'cat' ]     $(echo $operator_thing) echo 'Should not see this'"
+
+# $(echo "[ 'dog' = 'dog' ] $operator_thing echo 'Should see this'")
+# $(echo "[ 'dog' = 'cat' ] $operator_thing echo 'Should not see this'")
+# [ 'dog' = 'dog' ]    $operator_thing echo 'Should see this3'
+# [ 'dog' = 'cat' ]    $operator_thing echo 'Should not see this3'
+
+
+# operator_thing='||'
+
+# [ 'dog' = 'dog' ] $operator_thing echo "Should not see this"
+# [ 'dog' = 'cat' ] $operator_thing echo "Should see this"
+
+function show_match(){
+  expected=$1
+  result=$2
+    if [ "$expected" = "$result" ]; then printf '\033[32;1m'; else printf '\033[31;1m' ; fi
+  printf '%s\033[0m   ' $result 
+}
+
+function test_it(){
+  expected=$1
+  name_of_test=$2
+  var_to_test=$3
+
+  result=X
+  if [ -z ${var_to_test:+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+  result=X
+  if [ -n ${var_to_test:+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+  result=X
+  if [ ! -n ${var_to_test:+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+  result=X
+  if [ ! -z ${var_to_test:+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+    result=X
+  if [ -z ${var_to_test+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+  result=X
+  if [ -n ${var_to_test+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+  result=X
+  if [ ! -n ${var_to_test+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+  result=X
+  if [ ! -z ${var_to_test+x} ]; then result=✓ ; fi
+  show_match $expected $result
+
+
+
+
+  printf '          %s\n' "$name_of_test"
+}
+
+unset im_unset
+test_it X 'unset with passed variable' $im_unset
+test_it X 'unset with passed variable quoted' "$im_unset"
+test_it X 'param missing' 
+test_it X 'param missing quoted' ""
+
+
+im_empty=
+im_null=\0
+im_zero=0
+im_false_the_word='false'
+im_the_result_of_false_or_something=false
+im_the_print_of_false=$(false)
+im_a_normal_thing='asdfghjk'
+im_a_number=65
+im_something_with_space='asfafg adfvaffa arfgafgd adfgaf'
+
+
+
+

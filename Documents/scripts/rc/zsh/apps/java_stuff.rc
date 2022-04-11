@@ -1,0 +1,2 @@
+alias jbc='jbang -c'
+alias jbi='jbang -i'

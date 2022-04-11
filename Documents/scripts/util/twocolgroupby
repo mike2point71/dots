@@ -1,0 +1,38 @@
+#! /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin/python3
+
+import sys
+import json
+from rich.console import Console
+from rich.table import Table
+# [].sort('t')
+mapping = {}
+for line in sys.stdin:
+    line = line.strip()
+    pivot = line.find(' ')
+    value = int(line[0:pivot])
+    name = line[pivot:]
+    data = mapping.get(name)
+    if not data:
+        mapping[name] = {'c': 0, 't': 0, 'n': name}
+        data = mapping[name]
+    data['c'] += 1
+    data['t'] += value
+    # mapping[name] = mapping.get(name, 0) + value
+
+    # print(f"name: {name}  |  value: {value}")
+
+entries = list(mapping.values())
+entries.sort(key=lambda e: e['t'])
+# for e in entries:
+#     print(f"{e['n']-e['c']-e['t']}")
+
+console = Console()
+
+table = Table(show_header=True, header_style="bold magenta")
+table.add_column("Name")
+table.add_column("Count")
+table.add_column("Value")
+for e in entries:
+    table.add_row(e['n'], str(e['c']), str(e['t']))
+
+console.print(table)

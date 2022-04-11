@@ -1,0 +1,3 @@
+#! /bin/sh
+
+sudo /bin/ps -axm -o pid,comm,pmem,lim,majflt,minflt,nswap,oublk,pagein,rss,cputime,tsiz,vsz

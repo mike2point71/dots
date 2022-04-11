@@ -1,0 +1,24 @@
+#! /bin/zsh
+
+bw='\033[97;1m'
+bb='\033[96;1m'
+off='\033[0m'
+
+function write_bw(){
+    echo "${bw}${1}${off}"
+}
+
+echo "\n\n${bw}define listy:${off}  ${bb}listy=(first 'second' 'third position' 4)${off}"
+listy=(first 'second' 'third position' 4)
+
+echo "\n${bw}listy${off} = $listy"
+
+echo ${bb}'\nfor e in $listy; echo "$e"'${off}
+for e in $listy; echo "$e"
+
+echo ${bw}'\nzsh is 1-indexed\nget 1st position with '${bb}'$listy[(w)1]'${off}
+echo "$listy[(w)1]"
+
+echo ${bw}'\nbash is 0-indexed.'
+echo 'This is "portable": '${bb}'${listy[@]:0:1}'${off}
+echo "${listy[@]:0:1}"

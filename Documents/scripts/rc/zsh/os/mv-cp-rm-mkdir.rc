@@ -1,0 +1,7 @@
+alias cp='/usr/local/bin/advcp -gai'
+alias mv='/usr/local/bin/advmv -g'
+
+function mkd(){
+    mkdir -pv $1
+    cd $1
+}
