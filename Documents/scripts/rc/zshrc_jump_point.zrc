@@ -1,5 +1,6 @@
 # source /opt/homebrew/bin/env_parallel.zsh
 
+loud=$1
 
 export MK_SCRIPTS="$DOCSFLDR/scripts"
 
@@ -24,10 +25,11 @@ zsh_rc_folder="$MK_SCRIPTS"/rc/zsh
 
 function source_up_R () {
   local current_path="$1"
-  gls -lhAF "$current_path" | while IFS= read -r line; do 
+  gls -lhF "$current_path" | while IFS= read -r line; do
     case "${line[-1]}" in
       '*')
         local filename="${${line##* }%%\*}"
+        if [ "$loud" = 'loud' ]; then echo "$current_path"/$filename ; fi
         source "$current_path"/$filename
         ;;
       '/')

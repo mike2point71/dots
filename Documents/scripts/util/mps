@@ -1,3 +1,55 @@
-#! /bin/sh
+#! /bin/zsh
 
-sudo /bin/ps -axm -o pid,comm,pmem,lim,majflt,minflt,nswap,oublk,pagein,rss,cputime,tsiz,vsz
+
+handler='head'
+echo "Param count: $#"
+while [ $# -gt 0 ]; do
+  case $1 in
+    --*)
+      arg=${1#??}
+      case $arg in
+        all) handler='cat' ;;
+        count=*) cutoff=${arg#count=};;
+        *) "I don't know what $arg means" ;;
+      esac
+    ;;
+    -*)
+      args=${1#?}
+      while [ ${#args} -gt 0 ]; do
+        case ${args[1,1]} in
+          a) handler='cat' ;;
+          s) handler-'aggregator' ;;
+          *) echo "I don't know what -${args[1,1]} means." ;;
+        esac
+        args=${args#?}
+      done
+    ;;
+  
+  esac
+  shift
+done
+
+
+
+# zmodload zsh/zutil || exit 11
+# zparseopts -D -E -F -- \
+#   {c, -cutoff}=cutoff
+#  a:=arg_val -arg:=arg_val f=flag -flag=flag \
+# 	F=foobar -foo=foobar B=foobar -bar=foobar || exit 1
+
+
+
+
+cutoff=${cutoff:-15}
+
+sudo /bin/ps -axm -o pid,pmem,rss,cputime,ruid,ppid,ucomm | case $handler in
+  'head')
+    head -n $cutoff
+  ;;
+  'cat')
+    cat
+  ;;
+  'aggregator')
+    ps_aggregator
+  ;;
+esac

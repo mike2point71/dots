@@ -1,5 +1,4 @@
 #! /bin/sh
 
-chmod -R 777 "$HOME"/scripts
-chmod -R 777 "$HOME"/bin
-chmod -R 777 "$HOME"/learning
+chmod -R 777 "$HOME"/Documents/scripts
+chmod -R 777 "$HOME"/Documents/bin
