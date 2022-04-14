@@ -1,0 +1,34 @@
+#   Changing Directories
+setopt AUTO_CD
+setopt CDABLE_VARS
+setopt CHASE_LINKS
+
+
+#   Completion
+setopt AUTO_PARAM_SLASH
+setopt AUTO_LIST
+setopt HASH_LIST_ALL
+setopt LIST_AMBIGUOUS
+setopt LIST_ROWS_FIRST
+setopt LIST_TYPES
+
+#   Expansion and Globbing
+
+
+#   Input/Output
+setopt ALIASES
+setopt NO_CLOBBER
+setopt APPEND_CREATE
+setopt CORRECT_ALL
+setopt INTERACTIVE_COMMENTS
+setopt PATH_DIRS
+
+#   Job Control
+setopt HUP
+
+#   Prompting
+
+#   Scripts and Functions
+setopt C_BASES
+setopt PIPE_FAIL
+setopt NO_CONTINUE_ON_ERROR

@@ -1,0 +1,123 @@
+#! /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin/python3
+
+import locale
+import psutil
+from math import log10, floor, pow
+from rich.console import Console
+from rich.table import Table
+locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
+
+
+def get_mem_info(thing):
+    if mi := thing['memory_info']:
+        return int(mi.rss)
+    else:
+        return False
+        # print(f"What's up with this guy? {thing['exe']}")
+
+
+bigdict = {}
+for proc in psutil.process_iter(['pid']):
+    try:
+
+        pdict = proc.as_dict()
+        if get_mem_info(pdict):
+            ppid = pdict['ppid']
+            bigdict[pdict['pid']] = {
+                'pdict': pdict,
+                'children': [],
+                'include': False if ppid != 1 else True
+            }
+            bigdict[ppid]['children'].append(pdict)
+
+    except Exception as e:
+        print(e)
+
+
+def nice_number(num):
+    snum = str(num)
+    snum2 = ""
+    l = len(snum)
+    i = 1
+    while i <= l:
+        snum2 = snum[-i] + snum2
+        if i % 3 == 0:
+            snum2 = ',' + snum2
+        i += 1
+    if snum2[0] == ',':
+        snum2 = snum2[1:]
+    return snum2
+
+
+def ram_string(ram_total):
+    rscale = 0
+    if ram_total > 0:
+        rscale = floor(log10(ram_total)) + 1
+    crop_digits = rscale - 3
+    unit_number = floor(rscale / 3)
+
+    scaled_ram = ram_total / pow(10, rscale - 3)
+    if (then_divide := (3 - (crop_digits % 3))) == 0:
+        scaled_ram *= 1000
+        unit_number -= 1
+    else:
+        scaled_ram = scaled_ram / pow(10, then_divide)
+    units = [['B'], ['KB'], ['MB'], ['GB']][unit_number]
+    return str(scaled_ram)[0:4] + units[0]
+
+
+def mb_string(ram_total):
+    cutoff = (floor(log10(mb_ram)) + 1) if (mb_ram := (ram_total / 1000000)) >= 10 else 1
+    diggies = f"{int(str(round(mb_ram))[0:cutoff]):n}"
+    return diggies + "MB"
+
+
+proccies = []
+
+grand_total = 0
+
+for k in bigdict.keys():
+
+    v = bigdict[k]
+    if v['include']:
+        pdict = v['pdict']
+        total_ram = my_ram = get_mem_info(pdict)
+        kid_ram = 0
+        kid_count = 0
+        kid_ram_string = ""
+        if c := v['children']:
+            kid_ram = sum(list(map(get_mem_info, c)))
+            kid_count = len(c)
+            kid_ram_string = f"{mb_string(my_ram)} + {mb_string(kid_ram)} from {kid_count}"
+            total_ram += kid_ram
+        grand_total += total_ram
+        proccies.append({
+            'pid': str(k),
+            'my_ram_string': mb_string(my_ram),
+            'total_ram': total_ram,
+            'total_ram_string': mb_string(total_ram),
+            'kid_ram_string': kid_ram_string,
+            'name': pdict['name']})
+
+proccies.sort(key=lambda x: x['total_ram'])
+odds = False
+table = Table(title="Processes")
+
+# table.add_column("PID", justify="right", no_wrap=True)
+table.add_column("RAM", justify="right")
+table.add_column("Name", justify="left")
+# weights = ['[dim]', '', '[bold]', '[bold]']
+# running_total = 0
+# multiplier = 3 / grand_total
+for p in proccies:
+    # running_total += p['total_ram']
+    # weight = weights[floor(running_total * multiplier)]
+    weight = ''
+    table.add_row(
+        # f"{weight}{p['pid']}",
+        f"{weight}{p['total_ram_string']}",
+        f"{weight} [cyan]{p['name']}  {weight} [white]{p['kid_ram_string']}")
+
+table.add_row('', str(mb_string(grand_total)), "[red]Grand total")
+console = Console()
+console.print(table)

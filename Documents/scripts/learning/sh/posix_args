@@ -1,0 +1,63 @@
+#! /bin/sh
+
+
+# Arguments may be mixed in with flags
+# The flag -a/--arg takes an argument, store in $arg.
+# Store the flag -f/--flag in $flag.
+# The two flags -F/--foo and -B/--bar override each other, store in $foobar.
+# -- denotes end-of-options.
+# If an unknown flag is provided before --, error out.
+# After parsing, "$@" should be removed of all parsed flags and the -- end-of-options indicator.
+
+# The biggest downside of zparseopts is its poor support for long option names.
+# demo --file='/foo' is equivalent to demo --file '=/foo'. Ideally it should be demo --file 'foo'.
+# demo --file2 is equivalent to demo --file 2. Ideally it should be an error.
+# demo -v-file foo is equivalent to demo -v --file foo. Ideally it should be an error.
+# The error message on --unknown-option is "bad option: -" (literally). Ideally it should be "bad option: --unknown-option".
+# There is also a minor downside: unlike getopts, zparseopts doesn't support + options.
+# Lastly, I wish it was possible to instruct zparseopts to append only the value of an option to the array without the option's name. This would be especially helpful for options that can be repeated.
+# I'm also thinking there's probably a simple pre-parser that converts --option=value options to --option value
+# This would require duplicating most of the logic of zparseopts. Consider these arguments:
+# --foo --bar=baz
+# --foo qux --bar=baz
+# In the first case --bar=baz should be split into --bar baz if and only if --foo does not accept a value. In the second case it's the other way around.
+
+function parse_arg(){
+  case $1 in
+    -*)
+      argg=${1#?}
+      while [ ${argg#} -gt 0 ];do
+        case $argg in
+          a)
+            printf 'a'
+          ;;
+          b)
+            printf 'b'
+          ;;
+          c)
+            if [ ${argg#} -gt 1 ]; then
+              echo "FAIL"
+              return
+            fi
+          ;;
+          *)
+            echo "FAIL"
+            return
+          ;;
+        esac
+        argg=${argg#?}
+      done
+    ;;
+
+
+  esac
+  printf '\n'
+}
+
+function ftest1(){
+  printf 'a'
+  printf '\n'
+}
+
+[ "$(ftest1)" = 'a' ] || echo 'ftest failed'
+

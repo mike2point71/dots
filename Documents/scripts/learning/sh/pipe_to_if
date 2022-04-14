@@ -1,0 +1,21 @@
+#! /bin/sh
+
+muffin=1
+
+echo "YES ME!" | if [ $muffin -eq 1 ]; then cat; else echo "NOT ME!!"; fi
+echo "NOT ME!" | if [ $muffin -ne 1 ]; then cat; else echo "YES ME!!"; fi
+
+echo "YES ME!" | case $muffin in
+  0)
+    echo "Stupid 0"
+  ;;
+  1)
+    cat
+  ;;
+  2)
+    echo "stupid 2"
+  ;;
+  *)
+    echo "stupid catch"
+  ;;
+esac

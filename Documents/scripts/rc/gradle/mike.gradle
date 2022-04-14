@@ -1,0 +1,234 @@
+//initscript {
+//  repositories {
+//    mavenCentral()
+//  }
+//  dependencies {
+////    classpath 'org.gradle:gradle-api:+'
+////    classpath 'java.util'
+//  }
+//}
+
+println('running mike.gradle')
+
+//def int mkInitJavaVersion = 17
+
+gradle.settingsEvaluated { settings ->
+  println('in settingsEvaluated of mike.gradle')
+  settings.pluginManagement {
+    repositories {
+      gradlePluginPortal()
+    }
+    plugins {
+      id 'com.dua3.javafxgradle7plugin' version '0.0.9'
+      id 'org.javamodularity.moduleplugin' version '1.8.10'
+      id 'com.google.osdetector' version '1.7.0'
+      id 'org.openjfx.javafxplugin' version '0.0.11'
+      id 'com.github.johnrengelman.shadow' version '7.1.2'
+      id 'com.github.ben-manes.versions' version '+'
+      id 'io.freefair.lombok' version '+'
+      // id 'eu.leontebbens.gradle.chromedriver-updater' version '1.6.3'
+      id 'com.github.erdi.webdriver-binaries' version '2.7'
+      id 'com.github.erdi.idea-base' version '2.2'
+      id 'edu.sc.seis.launch4j' version '2.5.1'
+    }
+  }
+}
+
+def depsAlways = [
+  [
+    'annotationProcessor', 
+    'testAnnotationProcessor',
+    'implementation',
+  ]:[
+    'org.projectlombok:lombok:1.+',
+    'org.jetbrains:annotations:+',
+  ],
+  [
+    'implementation',
+  ]:[
+    'org.slf4j:slf4j-simple:1.+',
+    'org.slf4j:slf4j-api:1.+',
+    'org.apache.logging.log4j:log4j-api:2.+',
+    'org.apache.logging.log4j:log4j-core:2.+',
+    'ch.qos.logback:logback-classic:1.2.+',
+    'com.github.tonivade:purefun:0.+',
+  ],
+  [
+    'testImplementation',
+    'testRuntimeClasspath',
+  ]:[
+    'org.junit.jupiter:junit-jupiter:5.+',
+    'org.junit.jupiter:junit-jupiter-api:5.+',
+    'org.junit.jupiter:junit-jupiter-params:5.+',
+    'org.junit.jupiter:junit-jupiter-engine:5.+',
+    'org.junit.vintage:junit-vintage-engine:5.+',
+    'org.assertj:assertj-core:3.+',
+
+  ]
+]
+
+def repoList = [
+  'repo1.maven.org/maven2/',
+  'jitpack.io',
+  'repo.maven.apache.org/maven2/',
+  'oss.sonatype.org/content/repositories/releases/',
+  'packages.atlassian.com/rmvn/maven-atlassian-external/',
+  'repo.hortonworks.com/content/repositories/releases/',
+  // 'repo.spring.io/plugins-release/',
+  'releases.usethesource.io/maven/',
+]
+
+def addJvmAndCompilerArgs = [
+  '--enable-preview'
+]
+
+gradle.allprojects{p->
+  println('mike.gradle doing allprojects')
+  def figureOutJavaVersion = {
+    String tmp = ext.find('override.java.version')
+    if(tmp){
+      println("Overriding java version with ${tmp}")
+      return tmp
+    }
+    return '18'
+  }
+
+  p.repositories{
+    println('mike.gradle setting repositories.')
+    mavenCentral()
+    google()
+    repoList.each {u-> maven{url("https://$u")}}
+    mavenLocal()
+  }
+  p.pluginManager.withPlugin('idea', { iPlug->
+    println('mike.gradle setting idea stuff')
+    idea {
+        module {
+            downloadJavadoc = true
+            downloadSources = true
+        }
+    }
+  })
+  p.pluginManager.withPlugin('java', {jplug->
+    println('mike.gradle doing java plugin stuff')
+    depsAlways.each{dep->
+      dep.key.each{k->
+        dep.value.each{v->
+          p.dependencies.add(k, v)}}}
+    p.java.toolchain.languageVersion = JavaLanguageVersion.of(figureOutJavaVersion())
+    p.tasks.withType(JavaCompile) {jcTask->
+      println("Adding compiler args for task: ${jcTask}")
+      jcTask.options.compilerArgs.addAll(addJvmAndCompilerArgs)
+    }
+    p.test.useJUnitPlatform(){
+      // excludeTags 'ExampleExclude'
+    }
+    p.test.testLogging.with{tlc->
+      tlc.showStandardStreams = true
+      tlc.exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+      tlc.events = [
+        org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+        org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_ERROR,
+        org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED,
+        // org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
+        // org.gradle.api.tasks.testing.logging.TestLogEvent.STARTED,
+        // org.gradle.api.tasks.testing.logging.TestLogEvent.STANDARD_OUT,
+      ]
+    }
+  })
+  p.pluginManager.withPlugin('application', {appplug->
+    println('mike.gradle doing application plugin stuff')
+    p.application.applicationDefaultJvmArgs = [
+        *addJvmAndCompilerArgs
+    ]
+  })
+  p.pluginManager.withPlugin('groovy', {groovyplug->
+    println('mike.gradle doing groovy plugin stuff')
+    p.compileGroovy.options.compilerArgs.addAll(addJvmAndCompilerArgs)
+    // p.compileGroovy { cgHandle->
+    //   println("Here is compileGroovy: ${cgHandle}")
+      
+    // }
+  })
+}
+
+
+/*
+********************************************************************
+Bunch of whacky methods.
+*/
+
+def whatAmI(def name) {
+  println("In $name:")
+  if (this) println("  this: ${this} - ${this.class}")
+  if (getOwner) println("  owner: ${owner} - ${owner.class}")
+  if (getDelegate) println("  delegate: ${delegate} - ${delegate.class}")
+}
+
+def separator = new StringBuilder(System.lineSeparator())
+  .append('*'*80)
+  .append(System.lineSeparator())
+  .toString()
+
+def talkAbout = {String name, Object o->
+  def rints = new Random().ints().iterator()
+  def printThis = new StringBuilder('Here is some info about ')
+    .append(name)
+    .append(': ')
+    .append(o.toString())
+    .append(System.lineSeparator())
+
+
+  def x = o.properties
+    .entrySet()
+    .findAll { e -> e.key.toString() != 'properties' }
+    .findAll { e -> !(e.value.toString().matches(~/.*@[0-9a-f]{7,8}$/)) }
+    .groupBy { e ->
+      Object v = e.value;
+      Class<?> c = v?.class
+      String n = c?.name
+      String returnMe = '999999wtf'
+      switch(n){
+        case null:
+          returnMe = '000000null'; break
+        case { it.startsWith('java.lang') }: returnMe = '000005' + n; break
+        case { it.startsWith('java.util') }: returnMe = '000050' + n; break
+        case { it.endsWith('File') }: returnMe = '000500File'; break
+        case { it.startsWith('org.gradle') }: returnMe = '050000' + n; break
+        default: returnMe = '500000' + n; break
+      }
+      returnMe }
+    .sort { e-> e.key }
+
+
+//              case {it instanceof String && it.endsWith('String')}-> '000001String'
+//              case {it.endsWith 'File'} -> return (Map.Entry<Integer, String>) [10:'File']
+//              case {it.startsWith 'org.gradle'} -> return (Map.Entry<Integer, String>) [100: e.value.getClass().getName()]
+//              default -> return (Map.Entry<Integer, String>) [1000: v?.getClass()?.name]}}
+//               switch(e.value?.getClass()?.name){
+//                 case null -> return (Map.Entry<Integer, String>) [0: 'null']
+//                 case  {it.endsWith 'String'}-> return (Map.Entry<Integer, String>) [1: 'String']
+//                 case {it.endsWith 'File'} -> return (Map.Entry<Integer, String>) [10:'File']
+//                 case {it.startsWith 'org.gradle'} -> return (Map.Entry<Integer, String>) [100: e.value.getClass().getName()]
+//                 default -> return (Map.Entry<Integer, String>) [1000: v?.getClass()?.name]}}
+
+
+  def s = x.collect { g,l ->
+    int lk = l.max{e->e.key.toString().size()}.key.toString().size()
+    new StringBuilder(g.substring(6))
+      .append(System.lineSeparator())
+      .append(
+        l.collect{ Map.Entry e ->
+          String sk = e?.key?.toString() ?: ''
+          "${' '*(lk-sk.size())}${sk}: ${e?.value}" }
+        ?.join(System.lineSeparator()))
+    .toString() }
+  .join(separator)
+
+  printThis.append(s)
+
+  println(printThis.toString())
+}
+
+
+// println('at the bottom of init.gradle')
