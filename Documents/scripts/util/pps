@@ -118,6 +118,6 @@ for p in proccies:
         f"{weight}{p['total_ram_string']}",
         f"{weight} [cyan]{p['name']}  {weight} [white]{p['kid_ram_string']}")
 
-table.add_row('', str(mb_string(grand_total)), "[red]Grand total")
+table.add_row(str(mb_string(grand_total)), "[red]Grand total")
 console = Console()
 console.print(table)
