@@ -1,5 +1,0 @@
-# Climate might be stupid?  Maybe I need to use it more...
-alias c='climate'
-
-# Hex viewer
-alias xd='xxd -l 256 -c 16'

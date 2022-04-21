@@ -1,123 +1,404 @@
 #! /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin/python3
-
+import functools
 import locale
+from typing import NamedTuple, List
+
 import psutil
+from collections import namedtuple
+from time import time
+
 from math import log10, floor, pow
+
+from psutil._psosx import pmem
 from rich.console import Console
 from rich.table import Table
+
 locale.setlocale(locale.LC_ALL, '')  # Use '' for auto, or force e.g. to 'en_US.UTF-8'
 
-
-def get_mem_info(thing):
-    if mi := thing['memory_info']:
-        return int(mi.rss)
-    else:
-        return False
-        # print(f"What's up with this guy? {thing['exe']}")
+start_time = time()
 
 
-bigdict = {}
-for proc in psutil.process_iter(['pid']):
+class Timey:
+
+    @classmethod
+    def from_p(cls, process: psutil.Process) -> 'Timey':
+        cpu_time = process.cpu_times()
+        return Timey(
+            time() - process.create_time(),
+            cpu_time.user,
+            cpu_time.system,
+        )
+
+    @classmethod
+    def zero(cls):
+        return Timey(0.0, 0.0, 0.0)
+
+    def __init__(self, longev: float, u: float, s: float):
+        self.longevity = longev
+        self.u_time = u
+        self.s_time = s
+
+    @functools.cached_property
+    def burn(self) -> float:
+        return self.s_time / self.longevity
+
+    # def __iadd__(self, other: 'Timey'):
+    #     self.u_time += other.u_time
+    #     self.s_time += other.s_time
+    #     return self
+
+    def __add__(self, other: 'Timey') -> 'Timey':
+        return Timey(
+            self.longevity,
+            self.u_time + self.u_time,
+            self.s_time + other.s_time,
+        )
+
+
+class ByteCount:
+    # value: int
+
+    def __init__(self, v):
+        self.value = v
+
+    def __str__(self) -> str:
+        cutoff = (floor(log10(mb_ram)) + 1) if (mb_ram := (self.value / 1000000)) >= 10 else 1
+        return f"{int(str(round(mb_ram))[0:cutoff]):n}MB"
+
+    # def __iadd__(self, other):
+    #     self.value += other.value
+    #     return self
+
+    def __add__(self, other) -> 'ByteCount':
+        return ByteCount(
+            self.value + other.value,
+        )
+
+    def clone(self):
+        return ByteCount(self.value)
+
+
+class RamMeas:
+    # rss: ByteCount
+    # # uss: ByteCount
+    # pageins: int
+    # pfaults: int
+
+    @classmethod
+    def from_m(cls, m: pmem) -> 'RamMeas':
+        return RamMeas(
+            # ByteCount(m.uss),
+            m.rss,
+            m.pfaults,
+            m.pageins
+        )
+
+    @classmethod
+    def zero(cls) -> 'RamMeas':
+        return RamMeas(0, 0, 0)
+
+    def __init__(self, r: int, pi: int, pf: int):
+        self.rss = ByteCount(r)
+        self.pageins = pi
+        self.pfaults = pf
+
+    # def __iadd__(self, other: 'RamMeas'):
+    #     self.rss += other.rss
+    #     # self.uss += other.uss
+    #     self.pageins += other.pageins
+    #     self.pfaults += other.pfaults
+    #     # return self
+
+    def __add__(self, other: 'RamMeas') -> 'RamMeas':
+        return RamMeas(
+            self.rss.value + other.rss.value,
+            # self.uss + other.uss,
+            self.pageins + other.pageins,
+            self.pfaults + other.pfaults,
+        )
+
+    def __str__(self):
+        return f"{self.rss}, {self.pageins}, {self.pfaults}"
+
+    def clone(self) -> 'RamMeas':
+        return RamMeas(
+            self.rss.value,
+            # self.uss.clone(),
+            self.pageins,
+            self.pfaults
+        )
+
+
+# class Rambo(NamedTuple):
+#     mine: RamMeas
+#     c_ttl: RamMeas
+#
+#     def grand_total(self) -> RamMeas:
+#         return self.mine + self.c_ttl
+#
+#     def breakdown(self, child_count) -> str:
+#         return ''
+
+
+class Procaroo():
+    # pid: str
+    # name: str
+    # c: List['Procaroo']
+    # r: RamMeas
+    # t: Timey
+    bigdict = {}
+    ALL_RAM = RamMeas.zero()
+    DISPLAY_LIST: List['Procaroo'] = []
+
+    def __init__(self, pp: psutil.Process):
+        self.pid: str = str(pp.pid)
+        self.ppid: int = pp.ppid()
+        self.name: str = pp.name()
+        self.c: List['Procaroo'] = []
+        self.r: RamMeas = RamMeas.from_m(pp.memory_info())
+        self.t: Timey = Timey.from_p(pp)
+        self.display_me = self.ppid == 1
+        Procaroo.ALL_RAM += self.r
+        if self.display_me:
+            Procaroo.DISPLAY_LIST.append(self)
+        # if my_parent := Procaroo.bigdict[self.ppid]:
+        #     self.parent = my_parent
+        #     self.parent.c.append(self)
+        #     self.display_me = False
+        # else:
+        #     self.display_me = True
+        # tmp_entity = self
+        # depth = 0
+        #
+        # while (tppid := tmp_entity.ppid) and tppid != 1:
+        #     depth += 1
+        #     tmp_entity=Procaroo.bigdict[tppid]
+        # if depth >= 1:
+        #     self.ancestor_pid = tmp_entity.pid
+        #     tmp_entity(self)
+        #     self.display_me = False
+        # else:
+        #     self.display_me = True
+        # return Procaroo(
+        # str(p.pid),
+        # p.name(),
+        # [],
+        # RamMeas.from_m(p.memory_info()),
+        # Timey(p)
+        # )
+
+    # def add_child(self, child: 'Procaroo'):
+    #     self.c.append(child)
+
+    @functools.cached_property
+    def desc(self):
+        return f"{self.name}({self.pid})"
+
+    @functools.cached_property
+    def total_child_ram(self) -> RamMeas:
+        return sum([x.r for x in self.c], RamMeas.zero())
+
+    @functools.cached_property
+    def total_ram(self) -> RamMeas:
+        return self.total_child_ram + self.r
+
+    @functools.cached_property
+    def total_child_time(self) -> Timey:
+        return sum([x.t for x in self.c], Timey.zero())
+
+    @functools.cached_property
+    def total_time(self):
+        return self.total_child_time + self.t
+
+    @functools.cached_property
+    def sort_value(self) -> int:
+        return self.pf_abs_int
+
+    @functools.cached_property
+    def pf_ram_time(self):
+        tiny_number = (self.total_ram.pfaults / (self.total_ram.rss.value * self.total_time.s_time))
+        return f"{floor(tiny_number * 1000000000):n}"
+
+    @functools.cached_property
+    def pf_abs_int(self):
+        tiny_number = (self.total_ram.pfaults / self.t.longevity)
+        return floor(tiny_number * 1000)
+
+    @functools.cached_property
+    def pf_abs(self):
+        return f"{self.pf_abs_int:n}"
+
+    @functools.cached_property
+    def breakdown(self) -> str:
+        return (f"{self.r} + {self.total_child_ram} from {len(self.c)}" if
+                len(self.c) > 0 else
+                f"{self.r}")
+
+    def __str__(self):
+        return f"PID: {self.pid}, PPID: {self.ppid}, Name: {self.name}"
+
+
+# def get_mem_info(thing):
+#     if mi := thing['memory_info']:
+#         return int(mi.rss)
+#     else:
+#         return False
+#         # print(f"What's up with this guy? {thing['exe']}")
+
+
+# class PG(NamedTuple):
+#     ps: psutil.Process
+#     m: object
+#
+#     i: bool
+
+# PG = namedtuple("PG", ['ps', 'm', 'c', 'i'])
+for ps_i in psutil.process_iter(['pid', 'ppid', 'name', 'create_time', 'cpu_times']):
     try:
-
-        pdict = proc.as_dict()
-        if get_mem_info(pdict):
-            ppid = pdict['ppid']
-            bigdict[pdict['pid']] = {
-                'pdict': pdict,
-                'children': [],
-                'include': False if ppid != 1 else True
-            }
-            bigdict[ppid]['children'].append(pdict)
+        # print(ps)
+        # m = ps.memory_info_ex()
+        # m = ps_i.memory_info()
+        # mf = ps.memory_full_info()
+        # print(f"m:{m}")
+        # print(f"mf:{mf}")
+        # print(f"{m.rss}, {m.lib}, {m.vms}, {m.data}, {m.dirty}, {m.private}, {m.shared}, {m.text}, {m.wset}, {m.}")
+        # print(f"{m.paged_pool}/{m.peak_paged_pool}, {m.nonpaged_pool}/{m.peak_nonpaged_pool}, {m.pagefile}/{m.peak_pagefile}")
+        # print(f"{m.pageins}-{m.pfaults}/{m.num_page_faults}, {m.}     {m.peak_wset},
+        # print()
+        Procaroo.bigdict[ps_i.pid] = pg = Procaroo(ps_i)  # , m, [], False if ps_i.ppid() != 1 else True)
+        # print('did a thing')
+        if parent := Procaroo.bigdict.get(ps_i.ppid()):
+            # print("its true")
+            parent.c.append(pg)
+            # print('privacy or something?')
+            if pg.ppid != 1:
+                pg.display_me = False
+            # pg.display_me = not ps_i.ppid() == 1
 
     except Exception as e:
-        print(e)
+        print(f"Exception 1 handling process {ps_i.pid}: {e}")
+
+# def nice_number(num):
+#     snum = str(num)
+#     snum2 = ""
+#     l = len(snum)
+#     i = 1
+#     while i <= l:
+#         snum2 = snum[-i] + snum2
+#         if i % 3 == 0:
+#             snum2 = ',' + snum2
+#         i += 1
+#     if snum2[0] == ',':
+#         snum2 = snum2[1:]
+#     return snum2
 
 
-def nice_number(num):
-    snum = str(num)
-    snum2 = ""
-    l = len(snum)
-    i = 1
-    while i <= l:
-        snum2 = snum[-i] + snum2
-        if i % 3 == 0:
-            snum2 = ',' + snum2
-        i += 1
-    if snum2[0] == ',':
-        snum2 = snum2[1:]
-    return snum2
+# def ram_string(ram_total):
+#     rscale = 0
+#     if ram_total > 0:
+#         rscale = floor(log10(ram_total)) + 1
+#     crop_digits = rscale - 3
+#     unit_number = floor(rscale / 3)
+#
+#     scaled_ram = ram_total / pow(10, rscale - 3)
+#     if (then_divide := (3 - (crop_digits % 3))) == 0:
+#         scaled_ram *= 1000
+#         unit_number -= 1
+#     else:
+#         scaled_ram = scaled_ram / pow(10, then_divide)
+#     units = [['B'], ['KB'], ['MB'], ['GB']][unit_number]
+#     return str(scaled_ram)[0:4] + units[0]
 
 
-def ram_string(ram_total):
-    rscale = 0
-    if ram_total > 0:
-        rscale = floor(log10(ram_total)) + 1
-    crop_digits = rscale - 3
-    unit_number = floor(rscale / 3)
-
-    scaled_ram = ram_total / pow(10, rscale - 3)
-    if (then_divide := (3 - (crop_digits % 3))) == 0:
-        scaled_ram *= 1000
-        unit_number -= 1
-    else:
-        scaled_ram = scaled_ram / pow(10, then_divide)
-    units = [['B'], ['KB'], ['MB'], ['GB']][unit_number]
-    return str(scaled_ram)[0:4] + units[0]
+# Rambo = namedtuple('Rambo', ['ttl', 'mine', 'c_ttl'])
+# RamMeas = namedtuple("RamMeas", list(ram_stat_positions.keys()))
+# def rambo_breakdown(rambo, meas_name):
+#     return
 
 
-def mb_string(ram_total):
-    cutoff = (floor(log10(mb_ram)) + 1) if (mb_ram := (ram_total / 1000000)) >= 10 else 1
-    diggies = f"{int(str(round(mb_ram))[0:cutoff]):n}"
-    return diggies + "MB"
+# proccies = []
+#
+# grand_total_mem: RamMeas = RamMeas.zero()
+#
+# print(f"grand_total_mem: {grand_total_mem}")
+#
+# for k in Procaroo.bigdict.keys():
+#
+#     proccy: Procaroo = Procaroo.bigdict[k]
+#
+#     if proccy.display_me:
+#         # my_ram = RamMeas(m.rss, m.uss, m.pageins, m.pfaults)
+#         # rss_breakdown_string = None
+#         # if c := pg.c:
+#         #
+#         #     kid_rss = sum(list(map(lambda x: x.m.rss, c)))
+#         #     kid_count = len(c)
+#         #     rss_breakdown_string =
+#         #     my_total_rss += kid_rss
+#         grand_total_mem += proccy.total_ram()
+#         proccies.append(proccy)
+#
+#         # {
+#         # 'pid': str(k),
+#         # 'my_total_rss': my_total_rss,
+#         # 'rss_breakdown_string': rss_breakdown_string,
+#         # 'name': p.name()})
+
+# def sort_fn(x: Procaroo) -> int:
+#     return x.total_ram().rss.value
 
 
-proccies = []
-
-grand_total = 0
-
-for k in bigdict.keys():
-
-    v = bigdict[k]
-    if v['include']:
-        pdict = v['pdict']
-        total_ram = my_ram = get_mem_info(pdict)
-        kid_ram = 0
-        kid_count = 0
-        kid_ram_string = ""
-        if c := v['children']:
-            kid_ram = sum(list(map(get_mem_info, c)))
-            kid_count = len(c)
-            kid_ram_string = f"{mb_string(my_ram)} + {mb_string(kid_ram)} from {kid_count}"
-            total_ram += kid_ram
-        grand_total += total_ram
-        proccies.append({
-            'pid': str(k),
-            'my_ram_string': mb_string(my_ram),
-            'total_ram': total_ram,
-            'total_ram_string': mb_string(total_ram),
-            'kid_ram_string': kid_ram_string,
-            'name': pdict['name']})
-
-proccies.sort(key=lambda x: x['total_ram'])
+Procaroo.DISPLAY_LIST.sort(key=lambda x: x.sort_value)
 odds = False
 table = Table(title="Processes")
 
 # table.add_column("PID", justify="right", no_wrap=True)
+table.add_column("Percent", justify="left", width=8)
 table.add_column("RAM", justify="right")
+table.add_column("PF/RamTime", justify='right')
+table.add_column("PFABS", justify='right')
 table.add_column("Name", justify="left")
 # weights = ['[dim]', '', '[bold]', '[bold]']
-# running_total = 0
+running_total = RamMeas.zero()
 # multiplier = 3 / grand_total
-for p in proccies:
-    # running_total += p['total_ram']
+eighth = Procaroo.ALL_RAM.rss.value / 8
+sixfour = eighth / 8
+block_builder = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
+bar_style = '[bold bright yellow]'
+for p in Procaroo.DISPLAY_LIST:
+    running_total += p.total_ram
+    rt2 = running_total.rss.value
+    scaled = rt2 / eighth
+    full_blocks = floor(scaled)
+    partial_block = block_builder[floor((scaled - full_blocks) * 8)]
     # weight = weights[floor(running_total * multiplier)]
     weight = ''
     table.add_row(
+        f"{bar_style}{'█' * full_blocks}{partial_block}",
         # f"{weight}{p['pid']}",
-        f"{weight}{p['total_ram_string']}",
-        f"{weight} [cyan]{p['name']}  {weight} [white]{p['kid_ram_string']}")
-
-table.add_row(str(mb_string(grand_total)), "[red]Grand total")
+        f"{weight}{p.total_ram}",
+        f"{weight}{p.pf_ram_time}",
+        f"{weight}{p.pf_abs}",
+        f"{weight} [cyan]{p.desc}  {weight} [white]{p.breakdown}",
+    )
+table.add_row("[red]Total ->", f"{str(Procaroo.ALL_RAM.rss)}")
 console = Console()
 console.print(table)
+
+# mem_tuple = psutil.virtual_memory()
+# m_ttl = mb_string(mem_tuple.total)
+# m_used = mb_string(mem_tuple.used)
+# m_free = mb_string(mem_tuple.free)
+# swp_tuple = psutil.swap_memory()
+# s_t = mb_string(swp_tuple.total)
+# s_u = mb_string(swp_tuple.used)
+# s_f = mb_string(swp_tuple.free)
+# s_p = mb_string(swp_tuple.percent)
+# s_i = mb_string(swp_tuple.sin)
+# s_o = mb_string(swp_tuple.sout)
+
+# m_free = mem_tuple.get(2)
+# print(m_ttl)
+# print(f"RAM.  Total: {m_ttl}. Used: {m_used}. Free: {m_free}")
+# print(f"SWAP. Total: {s_t}. Used: {s_u}. Free: {s_f}. In: {s_i}. Out: {s_o}")
+print(f"Took: {time() - start_time}")

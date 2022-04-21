@@ -1,3 +1,0 @@
-# z > cd
-export _ZO_DATA_DIR="$HOME/.zoxide"
-alias z='zoxide'

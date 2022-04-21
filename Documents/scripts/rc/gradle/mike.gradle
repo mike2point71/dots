@@ -82,15 +82,29 @@ def addJvmAndCompilerArgs = [
   '--enable-preview'
 ]
 
+def modList = [
+  'jdk.base/sun.reflect.annotation',
+  'java.base/java.lang',
+  'java.base/sun.nio.ch',
+  'java.base/jdk.internal.misc'
+]
+def javaAdd = {  a, b -> "--add-$a=$b=ALL-UNNAMED" }
+def addExports = javaAdd.curry('exports')
+def exportList = modList.collect(addExports)
+def addOpens = javaAdd.curry('opens')
+def openList = modList.collect(addOpens)
+
 gradle.allprojects{p->
-  println('mike.gradle doing allprojects')
+  println("mike.gradle doing allprojects: ${p.name}")
   def figureOutJavaVersion = {
     String tmp = ext.find('override.java.version')
     if(tmp){
       println("Overriding java version with ${tmp}")
       return tmp
     }
-    return '18'
+    String defaultJava = '17'
+    println("Using default java version: ${defaultJava}.  Use the variable `override.java.version` in gradle.properties to override.")
+    return defaultJava
   }
 
   p.repositories{
@@ -139,7 +153,9 @@ gradle.allprojects{p->
   p.pluginManager.withPlugin('application', {appplug->
     println('mike.gradle doing application plugin stuff')
     p.application.applicationDefaultJvmArgs = [
-        *addJvmAndCompilerArgs
+      *addJvmAndCompilerArgs,
+      *exportList,
+      *openList,
     ]
   })
   p.pluginManager.withPlugin('groovy', {groovyplug->

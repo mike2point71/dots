@@ -1,8 +1,11 @@
 # source /opt/homebrew/bin/env_parallel.zsh
 
-loud=$1
+#loud=$1
+loud='loud'
 
 export MK_SCRIPTS="$DOCSFLDR/scripts"
+export ZSHRC_FOLDER="$MK_SCRIPTS"/rc/zsh
+export NANO_DATE_FORMAT="+%s.%N"
 
 path_array=(
   "$MK_SCRIPTS"/util
@@ -21,36 +24,59 @@ export PATH=${(j.:.)path_array}
 # echo $PATH
 
 
-zsh_rc_folder="$MK_SCRIPTS"/rc/zsh
 
 function source_up_R () {
   local current_path="$1"
-  gls -lhF "$current_path" | while IFS= read -r line; do
+  # -l     use a long listing format
+  # -F, --classify[=WHEN]
+  #       append indicator (one of */=>@|) to entries; WHEN can be 'always' (default if omitted), 'auto', or 'never
+  # -X Sort by file extension
+  # -r, --reverse  reverse order while sorting
+
+  # F to match on.  -X & --reverse so that stuff in root gets executed before others.
+  # If something needs to go after something else, just put the one for after into a folder peer to the before-guy
+  local line
+  # gls -1F --reverse --group-directories-first "$current_path" | while IFS= read -r line; do
+  gls -1FXr "$current_path" | while IFS= read -r line; do
+    local file_or_dir="${current_path}/${line%?}"
+
     case "${line[-1]}" in
       '*')
-        local filename="${${line##* }%%\*}"
-        if [ "$loud" = 'loud' ]; then echo "$current_path"/$filename ; fi
-        source "$current_path"/$filename
+        if [ "$loud" = 'loud' ]; then
+          start_time=$(gdate $NANO_DATE_FORMAT)
+          printf 'Sourcing:  %s' "${file_or_dir#${ZSHRC_FOLDER}}"
+        fi
+        source "$file_or_dir"
+        if [ "$loud" = 'loud' ]; then
+          end_time=$(gdate $NANO_DATE_FORMAT)
+          elapsed=$((end_time - start_time))
+          elapsed_string="${elapsed:0:4}"
+          if [ ! "$elapsed_string" = '0.00' ]; then
+            printf '...took %s seconds' ${elapsed_string}
+          fi
+          printf '\n'
+        fi
+
         ;;
       '/')
-        local dirrr="${${line##* }%%/}"
-        source_up_R "$current_path"/$dirrr
-        ;;
+        source_up_R "$file_or_dir"
+      ;;
     esac
+
   done
 }
 
 
 
-source_up_R "$zsh_rc_folder"
+source_up_R "$ZSHRC_FOLDER"
 
 
 
 
 # The next line updates PATH for the Google Cloud SDK.
-# if [ -f '/Users/m/b/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/m/b/google-cloud-sdk/path.zsh.inc'; fi
+# [ -r '/Users/m/b/google-cloud-sdk/path.zsh.inc' ] && source '/Users/m/b/google-cloud-sdk/path.zsh.inc'
 
 # The next line enables shell command completion for gcloud.
-# if [ -f '/Users/m/b/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/m/b/google-cloud-sdk/completion.zsh.inc'; fi
+# [ -r '/Users/m/b/google-cloud-sdk/completion.zsh.inc' ] && source '/Users/m/b/google-cloud-sdk/completion.zsh.inc'
 
-# test -e /Users/m/.iterm2_shell_integration.zsh && source /Users/m/.iterm2_shell_integration.zsh || true
+# [ -r /Users/m/.iterm2_shell_integration.zsh ] && source /Users/m/.iterm2_shell_integration.zsh || true

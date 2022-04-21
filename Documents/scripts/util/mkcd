@@ -2,5 +2,5 @@
 
 dir="$1"
 
-mkdir -pv "$dir"
-cd "$dir"
+mkdir -pv "$dir" || exit
+cd "$dir" || exit
