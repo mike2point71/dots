@@ -1,0 +1,24 @@
+export LC_ALL=en_US.UTF-8
+export LDFLAGS="-L/usr/local/opt/libffi/lib"
+export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
+
+export PYTHONSTARTUP=~/scripts/rc/python/ipythonstartup.py
+export IPYTHONDIR=~/.ipython
+
+
+export FD_STDIN=/dev/fd/0
+export FD_STDOUT=/dev/fd/1
+export FD_STDERR=/dev/fd/2
+
+export NEO4J_HOME='/Users/m/.neo4j'
+export NEO4J_CONF='/Users/m/.neo4j/conf'
+
+export GOPATH="${HOME}/.go"
+#export GOROOT="$(brew --prefix golang)/libexec"
+# brew --prefix takes like 0.6 seconds.  Terrible.
+export GOROOT=/opt/homebrew/opt/go/libexec
+
+export _ZO_DATA_DIR="$HOME/.zoxide"
+
+export PM="$MK_SCRIPTS/install/package_manager/pm"
+export PACKAGE_MANAGER=brew

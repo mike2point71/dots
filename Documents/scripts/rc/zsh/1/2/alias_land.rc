@@ -1,0 +1,55 @@
+
+need_free -v 'net-if' && alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
+need_free -v 'chrome' && alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123'
+
+need_free -v 'chrome' && alias jbc='jbang -c'
+need_free -v 'chrome' && alias jbi='jbang -i'
+
+need_free -v 'chrome' && alias gcam='git commit -am'
+need_free -v 'chrome' && alias gp='git pull'
+need_free -v 'chrome' && alias gpo='git push origin'
+
+
+# Dotfiles config shortcuts
+need_free -v 'chrome' && alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+need_free -v 'chrome' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
+need_free -v 'chrome' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
+need_free -v 'chrome' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r main --name-only"
+
+need_free -v 'chrome' && alias t='type -aS'
+
+
+# alias mps='sudo ps -axo acflag,pid,ruser,rgid,ppid,etime,time,utime,flags,state,pri,wq,wqb,wqr,xstat,args'
+
+
+# pm* short for package manager
+# alias pmi='brew install'
+# alias pml='brew list'
+
+need -v '/usr/local/bin/advcp' && alias cp='/usr/local/bin/advcp -gaui'
+need -v '/usr/local/bin/advmv' && alias mv='/usr/local/bin/advmv -gui'
+need_free -v 'chrome' && alias mkd='mkdir -pv'
+
+# Use mps script instead
+# alias mps='sudo ps -axo acflag,pid,ucomm,ruser,rgid,ppid,etime,time,utime,flags,state,pri,wq,wqb,wqr,xstat,args'
+# alias mps='sudo ps -amxo pid,ruser,rss,etime,time,utime,args | head -n10'
+
+need pps && alias pps='sudo pps'
+need procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
+need zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
+need glances && need_free -v 'mpg' && alias mpg='sudo glances'
+need htop && need_free -v 'mtop' && alias mtop='sudo htop'
+need px && need_free -v 'mpx' && alias mpx='sudo px'
+need px && need_free -v 'mpxt' && alias mpxt='sudo px --top'
+need "/Users/m/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
+
+# Climate might be stupid?  Maybe I need to use it more...
+need climate && need_free -v c && alias c='climate'
+
+# Hex viewer
+need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
+
+
+need ipython && need_free -v iii && alias iii='ipython --autocall=2'
+need python3 && need_free -v p3 && alias p='python3'
+alias pip='python3 -m pip'

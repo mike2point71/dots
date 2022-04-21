@@ -1,0 +1,34 @@
+# a finds all in path, S follows symliks to end
+
+function w() {
+	local parse_me=$1
+	local type_w="$(type -w $parse_me)"
+	local type_w2=${type_w##"$parse_me: "}
+	case $type_w2 in
+		'builtin')
+			echo 'builtin'
+			;;
+		'alias')
+			alias $parse_me
+			;;
+		'command')
+			type -S $parse_me
+			;;
+		'function')
+			whence -f $parse_me
+			;;
+		'hashed')
+			echo 'a command defined with the hash builtin 🤷‍♂️'
+			;;
+		'reserved')
+			echo 'Reserved word.'
+			;;
+		'none')
+			echo "$type_w2 is nothing."
+			;;
+
+		*)
+			echo "I don't know what a $type_w2 is..."
+			;;
+	esac
+}

@@ -1,0 +1,6 @@
+need -v bat && {
+  # Replacing cat with bat and just need to use 'b'
+  function b(){
+      bat --theme=ansi --style=full --paging=never --force-colorization $*
+  }
+}

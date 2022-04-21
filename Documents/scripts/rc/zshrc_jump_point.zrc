@@ -44,15 +44,15 @@ function source_up_R () {
       '*')
         if [ "$loud" = 'loud' ]; then
           start_time=$(gdate $NANO_DATE_FORMAT)
-          printf 'Sourcing:  %s' "${file_or_dir#${ZSHRC_FOLDER}}"
+          printf 'Sourcing:  %s' "${file_or_dir#${ZSHRC_FOLDER}/}"
         fi
         source "$file_or_dir"
         if [ "$loud" = 'loud' ]; then
           end_time=$(gdate $NANO_DATE_FORMAT)
           elapsed=$((end_time - start_time))
           elapsed_string="${elapsed:0:4}"
-          if [ ! "$elapsed_string" = '0.00' ]; then
-            printf '...took %s seconds' ${elapsed_string}
+          if [ $(echo "$elapsed_string > 0.1" | bc) -eq 1 ] ; then
+            print '\033[93;1m...took ${elapsed_string} seconds\033[0m' 
           fi
           printf '\n'
         fi

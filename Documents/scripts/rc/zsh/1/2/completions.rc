@@ -1,0 +1,28 @@
+add2fpath=(
+  $(brew --prefix)/share/zsh-completions
+  /opt/homebrew/completions/zsh/_zsh
+  $FPATH
+)
+
+export FPATH=${(j.:.)add2fpath}
+
+
+
+
+# The following lines were added by compinstall
+
+zstyle ':completion:*' completer _expand _complete _ignored _approximate
+zstyle ':completion:*' file-sort access
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' insert-unambiguous true
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|[._-]=** r:|=**' 'l:|=* r:|=*'
+zstyle ':completion:*' menu select=2
+zstyle ':completion:*' original true
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle :compinstall filename "${ZSHRC_FOLDER}/1/2/completions.rc"
+
+autoload -Uz compinit
+compinit
+# End of lines added by compinstall

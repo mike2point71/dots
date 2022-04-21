@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+rm -f example-tls example-http
+while ! curl -m 1 -s -o example-tls https://www.example.com; do
+	true
+done
+while true; do
+	if curl -m 1 -s -o example-http http://www.example.com/; then
+		if ! diff -q example-tls example-http; then break; fi
+	fi
+done

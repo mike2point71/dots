@@ -1,0 +1,8 @@
+need -v zoxide && {
+
+  # z > cd
+  # alias z='zoxide'
+  eval "$(zoxide init --hook prompt zsh)"
+
+}
+
