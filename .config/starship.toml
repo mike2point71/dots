@@ -1,0 +1,138 @@
+# format = """
+# $username\
+# $hostname\
+# $localip\
+# $shlvl\
+# $singularity\
+# $kubernetes\
+# $directory\
+# $vcsh\
+# $git_branch\
+# $git_commit\
+# $git_state\
+# $git_metrics\
+# $git_status\
+# $hg_branch\
+# $docker_context\
+# $package\
+# $buf\
+# $cmake\
+# $cobol\
+# $container\
+# $dart\
+# $deno\
+# $dotnet\
+# $elixir\
+# $elm\
+# $erlang\
+# $golang\
+# $haskell\
+# $helm\
+# $java\
+# $julia\
+# $kotlin\
+# $lua\
+# $nim\
+# $nodejs\
+# $ocaml\
+# $perl\
+# $php\
+# $pulumi\
+# $purescript\
+# $python\
+# $rlang\
+# $red\
+# $ruby\
+# $rust\
+# $scala\
+# $swift\
+# $terraform\
+# $vlang\
+# $vagrant\
+# $zig\
+# $nix_shell\
+# $conda\
+# $memory_usage\
+# $aws\
+# $gcloud\
+# $openstack\
+# $azure\
+# $env_var\
+# $crystal\
+# $custom\
+# $sudo\
+# $cmd_duration\
+# $line_break\
+# $jobs\
+# $battery\
+# $time\
+# $status\
+# $shell\
+# $character"""
+
+# none
+# bold
+# italic
+# underline
+# dimmed
+# inverted
+# bg:<color>
+# fg:<color>
+# <color>
+# >> black, red, green, blue, yellow, purple, cyan, white
+# >>> You can optionally prefix these with bright- to get the bright version (e.g. bright-white
+
+continuation_prompt = "▶▶"
+
+format="""
+$cmd_duration $status
+[$java $python $newline]()$aws
+$username @ $hostname in $directory\\($git_branch\\) $git_status
+$time[$jobs]()[$sudo]()$character"""
+
+[cmd_duration]
+disabled = false
+
+
+[status]
+disabled = false
+format = '[\[$symbol$common_meaning$signal_name$maybe_int\]](none) '
+map_symbol = true
+success_symbol = "[✓](bold green)"
+
+# [java]
+# \e638
+
+[username]
+style_user = "white bold"
+style_root = "red bold"
+format = "[$user]($style)"
+disabled = false
+show_always = true
+
+[hostname]
+ssh_only = false
+format = "[$hostname](bold red)"
+trim_at = "."
+disabled = false
+
+[time]
+disabled = false
+format = '🕙[$time](none) '
+# time_format = "%T"
+utc_time_offset = "-8"
+# time_range = "10:00:00-14:00:00"
+
+[sudo]
+style = "bold green"
+format = "🧙‍♂️🪄🪄"
+disabled = false
+
+# Replace the "❯" symbol in the prompt with "➜"
+[character] # The name of the module we are configuring is "character"
+success_symbol = "[➜](bold white)" # The "success_symbol" segment is being set to "➜" with the color "bold green"
+error_symbol = "[Maybe give some kind of auto correct thing a try??](bold red)" 
+
+# Disable the package module, hiding it from the prompt completely
+# [package]
+# disabled = true

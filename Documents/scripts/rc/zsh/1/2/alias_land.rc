@@ -14,7 +14,7 @@ need_free -v 'gpo' && alias gpo='git push origin'
 need_free -v 'dtf' && alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 need_free -v 'dtfs' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
 need_free -v 'dtfc' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
-need_free -v 'dtfls' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r main --name-only"
+need_free -v 'dtfls' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r --name-only HEAD"
 need_free -v 'dtfrm' && alias dtfrm="git --git-dir=$HOME/.dotfiles --work-tree=$HOME rm --cached"
 
 need_free -v 't' && alias t='type -aS'

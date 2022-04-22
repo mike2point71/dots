@@ -1,1 +1,6 @@
-Documents/scripts/linkablewiggle/.gitignore
+**/.DS_Store
+**/.idea/**
+**/venv/**
+**/incomplete/**
+.ssh/*
+Documents/scripts/linkablewiggle/**

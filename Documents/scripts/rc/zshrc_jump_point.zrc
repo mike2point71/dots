@@ -52,7 +52,7 @@ function source_up_R () {
           elapsed=$((end_time - start_time))
           elapsed_string="${elapsed:0:4}"
           if [ $(echo "$elapsed_string > 0.1" | bc) -eq 1 ] ; then
-            print '\033[93;1m...took ${elapsed_string} seconds\033[0m' 
+            print "\033[93;1m...took ${elapsed_string} seconds\033[0m" 
           fi
           printf '\n'
         fi
