@@ -1,4 +1,6 @@
 #! /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin/python3
+# vim: set ft=Python
+
 import functools
 import locale
 from typing import NamedTuple, List

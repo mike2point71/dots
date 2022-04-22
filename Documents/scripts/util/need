@@ -1,4 +1,5 @@
 #! /bin/zsh
+# vim: set ft=zsh
 
 be_quiet='QUIET'
 if [ "$1" = '-v' ]; then

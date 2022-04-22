@@ -1,4 +1,5 @@
 #! /bin/sh
+# vim: set ft=sh
 
 next_url='https://ports.macports.org/api/v1/ports/'
 

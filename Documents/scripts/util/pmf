@@ -1,4 +1,5 @@
 #! /bin/sh
+# vim: set ft=sh
 
 appname=$1
 if [ "$(expr $appname : '==>')" -lt 3 ] && [ "$(expr $appname : '^Casks')" -lt 3 ] && [ "$(expr $appname : '^Formulae')" -lt 6 ]; then
