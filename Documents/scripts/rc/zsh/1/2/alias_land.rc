@@ -1,22 +1,23 @@
 
-need_free -v 'net-if' && alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
+need ifconfig && need jc && need jq && need_free -v 'net-if' && alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
 need_free -v 'chrome' && alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123'
 
-need_free -v 'chrome' && alias jbc='jbang -c'
-need_free -v 'chrome' && alias jbi='jbang -i'
+need jbang && need_free -v 'jbc' && alias jbc='jbang -c'
+need jbang && need_free -v 'jbi' && alias jbi='jbang -i'
 
-need_free -v 'chrome' && alias gcam='git commit -am'
-need_free -v 'chrome' && alias gp='git pull'
-need_free -v 'chrome' && alias gpo='git push origin'
+need_free -v 'gcam' && alias gcam='git commit -am'
+need_free -v 'gp' && alias gp='git pull'
+need_free -v 'gpo' && alias gpo='git push origin'
 
 
 # Dotfiles config shortcuts
-need_free -v 'chrome' && alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
-need_free -v 'chrome' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
-need_free -v 'chrome' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
-need_free -v 'chrome' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r main --name-only"
+need_free -v 'dtf' && alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+need_free -v 'dtfs' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
+need_free -v 'dtfc' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
+need_free -v 'dtfls' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r main --name-only"
+need_free -v 'dtfrm' && alias dtfrm="git --git-dir=$HOME/.dotfiles --work-tree=$HOME rm --cached"
 
-need_free -v 'chrome' && alias t='type -aS'
+need_free -v 't' && alias t='type -aS'
 
 
 # alias mps='sudo ps -axo acflag,pid,ruser,rgid,ppid,etime,time,utime,flags,state,pri,wq,wqb,wqr,xstat,args'
@@ -28,7 +29,7 @@ need_free -v 'chrome' && alias t='type -aS'
 
 need -v '/usr/local/bin/advcp' && alias cp='/usr/local/bin/advcp -gaui'
 need -v '/usr/local/bin/advmv' && alias mv='/usr/local/bin/advmv -gui'
-need_free -v 'chrome' && alias mkd='mkdir -pv'
+need_free -v 'mkd' && alias mkd='mkdir -pv'
 
 # Use mps script instead
 # alias mps='sudo ps -axo acflag,pid,ucomm,ruser,rgid,ppid,etime,time,utime,flags,state,pri,wq,wqb,wqr,xstat,args'
@@ -52,4 +53,4 @@ need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
 need python3 && need_free -v p3 && alias p='python3'
-alias pip='python3 -m pip'
+need python3 && need pip && alias pip='python3 -m pip'
