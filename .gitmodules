@@ -1,0 +1,3 @@
+[submodule "Documents/scripts/rc/modules/marlonrichert"]
+	path = Documents/scripts/rc/modules/marlonrichert
+	url = https://github.com/marlonrichert/zsh-autocomplete.git

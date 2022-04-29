@@ -1,5 +1,5 @@
 #! /bin/sh
-# vim: set ft=sh
+# vim: set ft=sh:ts=2:et:
 
 next_url='https://ports.macports.org/api/v1/ports/'
 

@@ -1,5 +1,5 @@
 #! /bin/zsh
-# vim: set ft=zsh
+# vim: set ft=zsh:ts=2:et:
 
 be_quiet='QUIET'
 if [ "$1" = '-v' ]; then
@@ -11,7 +11,7 @@ if >/dev/null type $1; then
   exit 0
 else
   if [ "$be_quiet" = 'LOUD' ]; then
-    >&2 print "\n\033[93;1mERROR:  Missing \033[37m$1"
+    >&2 print "\n\033[93;1mERROR:  Missing \033[37m$1\033[0m"
   fi
   exit 1
 fi

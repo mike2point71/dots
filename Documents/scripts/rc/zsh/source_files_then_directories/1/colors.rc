@@ -1,0 +1,5 @@
+# NO SHEBANG BECAUSE THIS WILL BE SOURCED
+# vim: set ft=zsh:ts=2:et:
+
+export C_PLAIN="\033[0m"
+export C_BBYELLOW="\033[93;1m"

@@ -1,4 +1,4 @@
 #! /bin/sh
-# vim: set ft=sh
+# vim: set ft=sh:ts=2:et:
 
 ifconfig | jc --ifconfig | jq -r '.[] | .name'

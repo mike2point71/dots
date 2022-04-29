@@ -1,8 +1,0 @@
-# Go development
-need -v go && {
-  export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
-  test -d "${GOPATH}" || mkdir "${GOPATH}" || echo "Failed to mkdir (GOPATH) ${GOPATH}"
-  go_github="${GOPATH}/src/github.com"
-  test -d "${go_github}" || mkdir -p "${go_github}" || echo "Failed to mkdir (go_github) ${go_github}"
-}
-

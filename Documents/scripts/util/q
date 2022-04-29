@@ -1,5 +1,5 @@
 #! /bin/zsh
-# vim: set ft=zsh
+# vim: set ft=zsh:ts=2:et:
 
 params=($*)
 for param in $params; echo $param

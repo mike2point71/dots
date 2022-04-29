@@ -1,5 +1,5 @@
 #! /bin/zsh
-# vim: set ft=zsh
+# vim: set ft=zsh:ts=2:et:
 
 be_quiet='QUIET'
 if [ "$1" = '-v' ]; then
@@ -9,7 +9,7 @@ fi
 
 if >/dev/null type $1; then
   if [ "$be_quiet" = 'LOUD' ]; then
-    >&2 print "\n\033[93;1mERROR: \033[37m$1 \033[93;1mis already occupied!"
+    >&2 print "\n\033[93;1mERROR: \033[37m$1 \033[93;1mis already occupied!\033[0m"
     >&2 type -aS $1
   fi
   exit 1

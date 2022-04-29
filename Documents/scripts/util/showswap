@@ -1,5 +1,5 @@
 #!/bin/bash 
-# vim: set ft=bash
+# vim: set ft=bash:ts=2:et:
 
 # Get current swap usage for all running processes
 # Erik Ljungstrom 27/05/2011

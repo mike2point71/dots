@@ -1,3 +1,6 @@
+# NO SHEBANG BECAUSE THIS WILL BE SOURCED
+# vim: set ft=zsh:ts=2:et:
+
 need -v bat && {
   # Replacing cat with bat and just need to use 'b'
   function b(){

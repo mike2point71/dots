@@ -1,3 +1,7 @@
+# NO SHEBANG BECAUSE THIS WILL BE SOURCED
+# vim: set ft=zsh:ts=2:et:
+
+
 # a finds all in path, S follows symliks to end
 
 function w() {

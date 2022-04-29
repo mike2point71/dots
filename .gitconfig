@@ -1,7 +1,12 @@
 [user]
-	name = m
-	email = mike@mikewrig.ht
+	name = mike2point71
+	email = mpwright@gmail.com
 [core]
 	autocrlf = input
 [init]
 	defaultBranch = main
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process

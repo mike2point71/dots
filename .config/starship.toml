@@ -84,19 +84,21 @@
 
 continuation_prompt = "▶▶"
 
-format="""
-$cmd_duration $status
-[$java $python $newline]()$aws
-$username @ $hostname in $directory\\($git_branch\\) $git_status
-$time[$jobs]()[$sudo]()$character"""
+format="""$status:$cmd_duration $java$python$aws $username@$hostname//$directory $git_branch$git_status
+$time[$sudo]()$character"""
 
 [cmd_duration]
 disabled = false
+min_time = 0
+show_milliseconds = true
+show_notifications = true
+min_time_to_notify = 15_000
+format = "[$duration]($style)"
 
 
 [status]
 disabled = false
-format = '[\[$symbol$common_meaning$signal_name$maybe_int\]](none) '
+format = '[$symbol$common_meaning$signal_name$maybe_int](none)'
 map_symbol = true
 success_symbol = "[✓](bold green)"
 
@@ -127,6 +129,19 @@ utc_time_offset = "-8"
 style = "bold green"
 format = "🧙‍♂️🪄🪄"
 disabled = false
+
+[git_status]
+ahead = "⇡${count}"
+diverged = "⇕⇡${ahead_count}⇣${behind_count}"
+behind = "⇣${count}"
+conflicted = "🏳"
+up_to_date = "✓"
+untracked = "🤷"
+stashed = "📦"
+modified = "📝"
+staged = '[++\($count\)](green)'
+renamed = "👅"
+deleted = "🗑"
 
 # Replace the "❯" symbol in the prompt with "➜"
 [character] # The name of the module we are configuring is "character"
