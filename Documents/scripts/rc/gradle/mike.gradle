@@ -76,7 +76,9 @@ def repoList = [
   'repo.hortonworks.com/content/repositories/releases/',
   // 'repo.spring.io/plugins-release/',
   'releases.usethesource.io/maven/',
-]
+].findAll {
+  new URL('https://' + it).openConnection().getResponseCode() == 200
+}
 
 def addJvmAndCompilerArgs = [
   '--enable-preview'

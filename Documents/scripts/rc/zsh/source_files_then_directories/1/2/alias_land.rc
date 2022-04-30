@@ -4,8 +4,10 @@
 need ifconfig && need jc && need jq && need_free -v 'net-if' && alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
 need_free -v 'chrome' && alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123'
 
-need jbang && need_free -v 'jbc' && alias jbc='jbang -c'
-need jbang && need_free -v 'jbi' && alias jbi='jbang -i'
+need jbang && {
+  need_free -v 'jbc' && alias jbc='jbang -c'
+  need_free -v 'jbi' && alias jbi='jbang -i'
+}
 
 need_free -v 'gcam' && alias gcam='git commit -am'
 need_free -v 'gp' && alias gp='git pull'
@@ -42,8 +44,10 @@ need procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
 need zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
 need glances && need_free -v 'mpg' && alias mpg='sudo glances'
 need htop && need_free -v 'mtop' && alias mtop='sudo htop'
-need px && need_free -v 'mpx' && alias mpx='sudo px'
-need px && need_free -v 'mpxt' && alias mpxt='sudo px --top'
+need px && {
+  need_free -v 'mpx' && alias mpx='sudo px'
+  need_free -v 'mpxt' && alias mpxt='sudo px --top'
+}
 need "/Users/m/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
 
 # Climate might be stupid?  Maybe I need to use it more...
@@ -54,5 +58,7 @@ need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
 
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
-need python3 && need_free -v p3 && alias p='python3'
-need python3 && need pip && alias pip='python3 -m pip'
+need python3 && {
+  need_free -v p3 && alias p='python3'
+  need pip && alias pip='python3 -m pip'
+}
