@@ -77,18 +77,22 @@ def repoList = [
   // 'repo.spring.io/plugins-release/',
   'releases.usethesource.io/maven/',
 ].findAll {
-  new URL('https://' + it).openConnection().getResponseCode() == 200
-}
+  try {
+    URLConnection cnx = new URL('https://' + it).openConnection()
+    cnx.connectTimeout = 1000
+    cnx.readTimeout = 2000
+    return cnx.responseCode == 200 }
+  catch (Exception e) { return false }}
 
 def addJvmAndCompilerArgs = [
-  '--enable-preview'
+  '--enable-preview',
 ]
 
 def modList = [
   'jdk.base/sun.reflect.annotation',
   'java.base/java.lang',
   'java.base/sun.nio.ch',
-  'java.base/jdk.internal.misc'
+  'java.base/jdk.internal.misc',
 ]
 def javaAdd = {  a, b -> "--add-$a=$b=ALL-UNNAMED" }
 def addExports = javaAdd.curry('exports')
