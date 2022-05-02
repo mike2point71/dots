@@ -98,7 +98,7 @@ def modList = ext('module.adds.and.exports')?.split(',')
 //  'java.base/jdk.internal.misc',
 //  'java.base/jdk.internal.vm.annotation',
 //]
-def javaAdd = {  a, b -> "--add-$a=$b=ALL-UNNAMED" }
+def javaAdd = {  a, b -> ["--add-$a", "$b=ALL-UNNAMED"] }
 def addExports = javaAdd.curry('exports')
 def exportList = modList.collect(addExports)
 def addOpens = javaAdd.curry('opens')
@@ -160,6 +160,8 @@ gradle.allprojects{p->
       ]
     }
   })
+  p.jvmArgs+=addExports
+  p.jvmArgs+=addOpens
   p.pluginManager.withPlugin('application', {appplug->
     println('mike.gradle doing application plugin stuff')
     p.application.applicationDefaultJvmArgs = [
