@@ -88,32 +88,34 @@ def addJvmAndCompilerArgs = [
   '--enable-preview',
 ]
 
-def modList = ext('module.adds.and.exports')?.split(',') ?: [
-  'jdk.base/sun.reflect.annotation',
-  'java.base/sun.reflect.annotation',
-  'java.base/java.lang',
-  'java.base/sun.nio.ch',
-  'java.base/jdk.internal.misc',
-  'java.base/jdk.internal.vm.annotation',
-]
+def modList = ext('module.adds.and.exports')?.split(',')
+
+//  ?: [
+//  'jdk.base/sun.reflect.annotation',
+//  'java.base/sun.reflect.annotation',
+//  'java.base/java.lang',
+//  'java.base/sun.nio.ch',
+//  'java.base/jdk.internal.misc',
+//  'java.base/jdk.internal.vm.annotation',
+//]
 def javaAdd = {  a, b -> "--add-$a=$b=ALL-UNNAMED" }
 def addExports = javaAdd.curry('exports')
 def exportList = modList.collect(addExports)
 def addOpens = javaAdd.curry('opens')
 def openList = modList.collect(addOpens)
+def figureOutJavaVersion = {
+  String tmp = ext.find('override.java.version')
+  if(tmp){
+    println("Overriding java version with ${tmp}")
+    return tmp
+  }
+  String defaultJava = '17'
+  println("Using default java version: ${defaultJava}.  Use the variable `override.java.version` in gradle.properties to override.")
+  return defaultJava
+}()
 
 gradle.allprojects{p->
   println("mike.gradle doing allprojects: ${p.name}")
-  def figureOutJavaVersion = {
-    String tmp = ext.find('override.java.version')
-    if(tmp){
-      println("Overriding java version with ${tmp}")
-      return tmp
-    }
-    String defaultJava = '17'
-    println("Using default java version: ${defaultJava}.  Use the variable `override.java.version` in gradle.properties to override.")
-    return defaultJava
-  }
 
   p.repositories{
     println('mike.gradle setting repositories.')
@@ -137,7 +139,7 @@ gradle.allprojects{p->
       dep.key.each{k->
         dep.value.each{v->
           p.dependencies.add(k, v)}}}
-    p.java.toolchain.languageVersion = JavaLanguageVersion.of(figureOutJavaVersion())
+    p.java.toolchain.languageVersion = JavaLanguageVersion.of(figureOutJavaVersion)
     p.tasks.withType(JavaCompile) {jcTask->
       println("Adding compiler args for task: ${jcTask}")
       jcTask.options.compilerArgs.addAll(addJvmAndCompilerArgs)

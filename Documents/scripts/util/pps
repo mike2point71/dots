@@ -214,11 +214,16 @@ class Procaroo():
 
     @functools.cached_property
     def sort_value(self) -> int:
-        return self.pf_abs_int
+        return self.total_ram.rss.value
+        # return self.pf_abs_int
+
+    @functools.cached_property
+    def ram_time(self) -> float:
+        return total if (total := self.total_ram.rss.value * self.total_time.s_time) > 0 else 1/1_000_000_000
 
     @functools.cached_property
     def pf_ram_time(self):
-        tiny_number = (self.total_ram.pfaults / (self.total_ram.rss.value * self.total_time.s_time))
+        tiny_number = (self.total_ram.pfaults / self.ram_time)
         return f"{floor(tiny_number * 1000000000):n}"
 
     @functools.cached_property
