@@ -88,11 +88,13 @@ def addJvmAndCompilerArgs = [
   '--enable-preview',
 ]
 
-def modList = [
+def modList = ext('module.adds.and.exports')?.split(',') ?: [
   'jdk.base/sun.reflect.annotation',
+  'java.base/sun.reflect.annotation',
   'java.base/java.lang',
   'java.base/sun.nio.ch',
   'java.base/jdk.internal.misc',
+  'java.base/jdk.internal.vm.annotation',
 ]
 def javaAdd = {  a, b -> "--add-$a=$b=ALL-UNNAMED" }
 def addExports = javaAdd.curry('exports')
