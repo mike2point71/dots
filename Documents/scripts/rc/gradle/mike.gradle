@@ -160,8 +160,6 @@ gradle.allprojects{p->
       ]
     }
   })
-  p.jvmArgs+=addExports
-  p.jvmArgs+=addOpens
   p.pluginManager.withPlugin('application', {appplug->
     println('mike.gradle doing application plugin stuff')
     p.application.applicationDefaultJvmArgs = [
