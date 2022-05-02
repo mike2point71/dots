@@ -88,7 +88,7 @@ def addJvmAndCompilerArgs = [
   '--enable-preview',
 ]
 
-def modList = ext('module.adds.and.exports')?.split(',')
+def modList = ext.find('module.adds.and.exports')?.split(',')
 
 //  ?: [
 //  'jdk.base/sun.reflect.annotation',
@@ -100,9 +100,9 @@ def modList = ext('module.adds.and.exports')?.split(',')
 //]
 def javaAdd = {  a, b -> ["--add-$a", "$b=ALL-UNNAMED"] }
 def addExports = javaAdd.curry('exports')
-def exportList = modList.collect(addExports)
+//def exportList = modList.collect(addExports)
 def addOpens = javaAdd.curry('opens')
-def openList = modList.collect(addOpens)
+def openList = modList.each{addJvmAndCompilerArgs += [*addOpens(it), *addExports(it)]}
 def figureOutJavaVersion = {
   String tmp = ext.find('override.java.version')
   if(tmp){
@@ -166,8 +166,8 @@ gradle.allprojects{p->
     println('mike.gradle doing application plugin stuff')
     p.application.applicationDefaultJvmArgs = [
       *addJvmAndCompilerArgs,
-      *exportList,
-      *openList,
+//      *exportList,
+//      *openList,
     ]
   })
   p.pluginManager.withPlugin('groovy', {groovyplug->
