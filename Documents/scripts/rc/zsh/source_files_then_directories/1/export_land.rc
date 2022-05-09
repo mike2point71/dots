@@ -1,15 +1,26 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
+need -v brew && export BPRE="$(brew --prefix)"
+
 export LC_ALL=en_US.UTF-8
-export LDFLAGS="-L/usr/local/opt/libffi/lib"
-export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
 
-export PYTHONSTARTUP=~/scripts/rc/python/ipythonstartup.py
-export IPYTHONDIR=~/.ipython
+[ -d /opt/homebrew/opt/libffi ] && {
+  export LDFLAGS="-L/usr/local/opt/libffi/lib"
+  export CPPFLAGS="-I/opt/homebrew/opt/libffi/include"
+  export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
+}
 
-export IMSGDB="$HOME"/Library/Messages/chat.db
-export GOBANGIMSG="[[conn]]\\ntype = \"sqlite\"\\npath = \"$IMSGDB\"\\n"
+need ipython && {
+  export PYTHONSTARTUP=~/scripts/rc/python/ipythonstartup.py
+  export IPYTHONDIR=~/.ipython
+}
+
+IMSGDB="$HOME"/Library/Messages/chat.db
+[ -r "$IMSGDB" ] && {
+  export IMSGDB="$IMSGDB"
+  need gobang && export GOBANGIMSG="[[conn]]\\ntype = \"sqlite\"\\npath = \"$IMSGDB\"\\n"
+}
 
 
 export FD_STDIN=/dev/fd/0

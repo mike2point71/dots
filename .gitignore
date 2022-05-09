@@ -3,4 +3,5 @@
 **/venv/**
 **/incomplete/**
 .ssh/*
-Documents/scripts/linkablewiggle/**
+Documents/scripts/links/**
+Documents/scripts/rc/local/**

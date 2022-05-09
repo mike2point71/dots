@@ -55,7 +55,7 @@ need climate && need_free -v c && alias c='climate'
 
 # Hex viewer
 need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
-
+need -v delta && alias ∂='delta'
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
 need python3 && {

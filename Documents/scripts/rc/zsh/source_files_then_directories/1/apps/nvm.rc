@@ -1,13 +1,13 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
-need -v nvm && {
-  
-  export NVM_DIR="$HOME/.nvm"
-  nvmsh="/opt/homebrew/opt/nvm/nvm.sh"
-  [ -r "/opt/homebrew/opt/nvm/nvm.sh" ] && source "$nvmsh" || echo "Failed to source $nvmsh" # This loads nvm
-  nvmcompletions="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-  [ -r "$nvmcompletions" ] && source "$nvmcompletions" || echo "$nvmcompletions"  # This loads nvm bash_completion
 
-}
+  
+export NVM_DIR="$HOME/.nvm"
+nvmsh="/opt/homebrew/opt/nvm/nvm.sh"
+[ -r "/opt/homebrew/opt/nvm/nvm.sh" ] && source "$nvmsh" || echo "Failed to source $nvmsh" # This loads nvm
+nvmcompletions="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+[ -r "$nvmcompletions" ] && source "$nvmcompletions" || echo "$nvmcompletions"  # This loads nvm bash_completion
+
+
   
