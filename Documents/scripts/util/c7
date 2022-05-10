@@ -1,5 +1,8 @@
 #! /bin/sh
 # vim: set ft=sh:ts=2:et:
 
-chmod -R 777 "$DOCSFLDR"/scripts
-chmod -R 777 "$DOCSFLDR"/bin
+# chmod -R 777 "$DOCSFLDR"/scripts
+# chmod -R 777 "$DOCSFLDR"/bin
+
+fd --type file --exclude marlonrichert --exec chmod 777 {} \; . "$DOCSFLDR"/scripts
+fd --type file --exec chmod 777 {} \; . "$DOCSFLDR"/bin
