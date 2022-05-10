@@ -20,7 +20,9 @@ need_free -v 'dtfs' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HO
 need_free -v 'dtfc' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
 need_free -v 'dtfls' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r --name-only HEAD"
 need_free -v 'dtfrm' && alias dtfrm="git --git-dir=$HOME/.dotfiles --work-tree=$HOME rm --cached"
-
+need -v tig && {
+  need_free -v ftd && alias ftd="GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME tig"
+}
 need_free -v 't' && alias t='type -aS'
 
 
@@ -56,9 +58,21 @@ need climate && need_free -v c && alias c='climate'
 # Hex viewer
 need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
 need -v delta && alias ∂='delta'
+# need -v fzf && alias mf='fzf -m --ansi --tabstop=2 --black --preview="b {}"'
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
 need python3 && {
   need_free -v p3 && alias p='python3'
   need pip && alias pip='python3 -m pip'
 }
+
+alias ...=../..
+alias ....=../../..
+alias .....=../../../..
+alias ......=../../../../..
+alias .......=../../../../../..
+alias ........=../../../../../../..
+alias .........=../../../../../../../..
+alias ..........=../../../../../../../../..
+alias ...........=../../../../../../../../../..
+alias ............=../../../../../../../../../../..
