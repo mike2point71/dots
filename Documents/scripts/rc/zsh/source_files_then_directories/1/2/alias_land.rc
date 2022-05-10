@@ -59,6 +59,6 @@ need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
 need python3 && {
-  need_free -v p3 && alias p='python3'
+  need_free -v p3 && alias p3='python3'
   need pip && alias pip='python3 -m pip'
 }

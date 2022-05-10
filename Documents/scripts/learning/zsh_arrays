@@ -1,4 +1,6 @@
 #! /bin/zsh
+# vim: set ft=zsh:ts=2:et:
+
 
 bw='\033[97;1m'
 bb='\033[96;1m'

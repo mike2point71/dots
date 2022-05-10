@@ -1,4 +1,6 @@
 #! /bin/zsh
+# vim: set ft=zsh:ts=2:et:
+
 
 echo '     -----NAKED-----'
 echo 0

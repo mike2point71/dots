@@ -1,8 +1,10 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
-export STARSHIP_CONFIG=~/.config/starship.toml
-eval "$(starship init zsh)"
+need -v starship && {
+  export STARSHIP_CONFIG=~/.config/starship.toml
+  eval "$(starship init zsh)"
+}
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 export SDKMAN_DIR="$HOME/.sdkman"
