@@ -1,8 +1,20 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
-export NVM_DIR="$HOME/.nvm"
 nvmsh="/opt/homebrew/opt/nvm/nvm.sh"
-[ -r "/opt/homebrew/opt/nvm/nvm.sh" ] && source "$nvmsh" || echo "Failed to source $nvmsh" # This loads nvm
+export NVM_DIR="$HOME/.nvm"
+lazyLoadNvm(){
+  unalias nvm
+  source "$nvmsh"
+  nvm $*
+}
+
+[ -r "$nvmsh" ] && alias nvm=lazyLoadNvm
+
+
+
 nvmcompletions="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-[ -r "$nvmcompletions" ] && source "$nvmcompletions" || echo "$nvmcompletions"  # This loads nvm bash_completion
+{
+  [ -r "$nvmcompletions" ] && source "$nvmcompletions"
+} || echo "Failed to source completions: $nvmcompletions"
+
