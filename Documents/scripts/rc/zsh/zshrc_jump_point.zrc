@@ -14,6 +14,7 @@ export NANO_DATE_FORMAT="+%s.%N"
 path_array=(
   "$MK_SCRIPTS"/util
   "$MK_SCRIPTS"/learning
+  "$DOCSFLDR"/bin
   /opt/homebrew/opt/texinfo/bin
   "$HOME"/.cargo/bin
   "$HOME"/.sdkman/candidates/gradle/current/bin/
@@ -25,6 +26,9 @@ path_array=(
 )
 
 export PATH=${(j.:.)path_array}
+
+export BREWPREFIX=$(brew --prefix)
+
 
 # echo $PATH
 
@@ -73,6 +77,15 @@ function source_R () {
     esac
   done
 }
+
+add2fpath=(
+  /opt/homebrew/share/zsh-completions
+  /opt/homebrew/completions/zsh/_zsh
+  /opt/homebrew/share/zsh/site-functions
+  $FPATH
+)
+
+export FPATH=${(j.:.)add2fpath}
 
 source_timed "$ZSHRC_FOLDER"/source_specifically/do_before_compdefs.rc
 

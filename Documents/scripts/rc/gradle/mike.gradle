@@ -107,9 +107,10 @@ def figureOutJavaVersion = {
   String tmp = ext.find('override.java.version')
   if(tmp){
     println("Overriding java version with ${tmp}")
+    int tmpInt = java.lang.Integer.parseInt(tmp)
     return tmp
   }
-  String defaultJava = '17'
+  String defaultJava = 17
   println("Using default java version: ${defaultJava}.  Use the variable `override.java.version` in gradle.properties to override.")
   return defaultJava
 }()
@@ -139,10 +140,16 @@ gradle.allprojects{p->
       dep.key.each{k->
         dep.value.each{v->
           p.dependencies.add(k, v)}}}
-    p.java.toolchain.languageVersion = JavaLanguageVersion.of(figureOutJavaVersion)
+
+    // This doesn't work with --add-exports due to https://github.com/gradle/gradle/issues/18824
+//    p.java.toolchain.languageVersion = JavaLanguageVersion.of(figureOutJavaVersion)
+
+
     p.tasks.withType(JavaCompile) {jcTask->
       println("Adding compiler args for task: ${jcTask}")
       jcTask.options.compilerArgs.addAll(addJvmAndCompilerArgs)
+      jcTask.options.sourceCompatibility = figureOutJavaVersion
+      jcTask.options.targetCompatibility = figureOutJavaVersion
     }
     p.test.useJUnitPlatform(){
       // excludeTags 'ExampleExclude'

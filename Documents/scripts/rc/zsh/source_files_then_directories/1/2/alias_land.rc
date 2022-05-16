@@ -16,6 +16,9 @@ need_free -v 'gpo' && alias gpo='git push origin'
 
 # Dotfiles config shortcuts
 need_free -v 'dtf' && alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+need -v lazygit && {
+  need_free -v 'ldtf' && alias ldtf="lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME"
+}
 need_free -v 'dtfs' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
 need_free -v 'dtfc' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
 need_free -v 'dtfls' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r --name-only HEAD"
@@ -50,7 +53,7 @@ need -v px && {
   need_free -v 'mpx' && alias mpx='sudo px'
   need_free -v 'mpxt' && alias mpxt='sudo px --top'
 }
-need "/Users/m/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
+need "$HOME/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
 
 # Climate might be stupid?  Maybe I need to use it more...
 need climate && need_free -v c && alias c='climate'
@@ -62,8 +65,8 @@ need -v delta && alias ∂='delta'
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
 need -v python3 && {
-  alias python3='/opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin/python3'
-  alias pip='python3 -m pip'
+  need_free -v p3 && alias p3='python3'
+  need pip && alias pip='python3 -m pip'
 }
 
 alias ...=../..

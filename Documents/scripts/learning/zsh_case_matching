@@ -1,4 +1,6 @@
 #! /bin/zsh
+# vim: set ft=zsh:ts=2:et:
+
 
 function checkMatch(){
     case $1 in
