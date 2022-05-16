@@ -12,9 +12,8 @@ function killport() {
 }
 
 function cando () {
-  param1="$1"
-  if [ -z ${param1:+x} ]; then
-    compgen -A function -abck | grep -i "${param1}"
+  if [ $# -gt 0 ]; then
+    compgen -A function -abck | grep -i $*
   else
     compgen -A function -abck
   fi
