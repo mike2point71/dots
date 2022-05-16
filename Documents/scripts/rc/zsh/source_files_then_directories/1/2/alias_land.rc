@@ -20,7 +20,9 @@ need_free -v 'dtfs' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HO
 need_free -v 'dtfc' && alias dtfc="git --git-dir=$HOME/.dotfiles --work-tree=$HOME config"
 need_free -v 'dtfls' && alias dtfls="git --git-dir=$HOME/.dotfiles --work-tree=$HOME ls-tree -r --name-only HEAD"
 need_free -v 'dtfrm' && alias dtfrm="git --git-dir=$HOME/.dotfiles --work-tree=$HOME rm --cached"
-
+need -v tig && {
+  need_free -v ftd && alias ftd="GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME tig"
+}
 need_free -v 't' && alias t='type -aS'
 
 
@@ -39,12 +41,12 @@ need_free -v 'mkd' && alias mkd='mkdir -pv'
 # alias mps='sudo ps -axo acflag,pid,ucomm,ruser,rgid,ppid,etime,time,utime,flags,state,pri,wq,wqb,wqr,xstat,args'
 # alias mps='sudo ps -amxo pid,ruser,rss,etime,time,utime,args | head -n10'
 
-need pps && alias pps='sudo pps'
-need procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
-need zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
-need glances && need_free -v 'mpg' && alias mpg='sudo glances'
-need htop && need_free -v 'mtop' && alias mtop='sudo htop'
-need px && {
+need -v pps && alias pps='sudo pps'
+need -v procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
+need -v zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
+need -v glances && need_free -v 'mpg' && alias mpg='sudo glances'
+need -v htop && need_free -v 'mtop' && alias mtop='sudo htop'
+need -v px && {
   need_free -v 'mpx' && alias mpx='sudo px'
   need_free -v 'mpxt' && alias mpxt='sudo px --top'
 }
@@ -56,9 +58,21 @@ need climate && need_free -v c && alias c='climate'
 # Hex viewer
 need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
 need -v delta && alias ∂='delta'
+# need -v fzf && alias mf='fzf -m --ansi --tabstop=2 --black --preview="b {}"'
 
 need ipython && need_free -v iii && alias iii='ipython --autocall=2'
-need python3 && {
-  need_free -v p3 && alias p='python3'
-  need pip && alias pip='python3 -m pip'
+need -v python3 && {
+  alias python3='/opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin/python3'
+  alias pip='python3 -m pip'
 }
+
+alias ...=../..
+alias ....=../../..
+alias .....=../../../..
+alias ......=../../../../..
+alias .......=../../../../../..
+alias ........=../../../../../../..
+alias .........=../../../../../../../..
+alias ..........=../../../../../../../../..
+alias ...........=../../../../../../../../../..
+alias ............=../../../../../../../../../../..

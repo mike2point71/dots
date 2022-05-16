@@ -11,6 +11,7 @@ export LC_ALL=en_US.UTF-8
   export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
 }
 
+
 need ipython && {
   export PYTHONSTARTUP=~/scripts/rc/python/ipythonstartup.py
   export IPYTHONDIR=~/.ipython
@@ -27,8 +28,8 @@ export FD_STDIN=/dev/fd/0
 export FD_STDOUT=/dev/fd/1
 export FD_STDERR=/dev/fd/2
 
-export NEO4J_HOME='/Users/m/.neo4j'
-export NEO4J_CONF='/Users/m/.neo4j/conf'
+# export NEO4J_HOME='/Users/m/.neo4j'
+# export NEO4J_CONF='/Users/m/.neo4j/conf'
 
 # Go development
 need -v go && {
@@ -43,6 +44,8 @@ need -v go && {
   go_github="${GOPATH}/src/github.com"
   test -d "${go_github}" || mkdir -p "${go_github}" || echo "Failed to mkdir (go_github) ${go_github}"
 }
+
+need -v fzf && need -v bat && export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
 
 
 

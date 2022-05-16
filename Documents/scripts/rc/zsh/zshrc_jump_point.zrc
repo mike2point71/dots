@@ -15,8 +15,9 @@ path_array=(
   "$MK_SCRIPTS"/util
   "$MK_SCRIPTS"/learning
   /opt/homebrew/opt/texinfo/bin
-  /Users/m/.cargo/bin
-  /Users/m/.sdkman/candidates/gradle/current/bin/
+  "$HOME"/.cargo/bin
+  "$HOME"/.sdkman/candidates/gradle/current/bin/
+  "$DOCSFLDR"/bin
   /opt/homebrew/opt/ruby/bin
   /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin
   /opt/homebrew/opt/tcl-tk/bin
