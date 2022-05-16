@@ -4,9 +4,7 @@
 **/incomplete/**
 .ssh/*
 Documents/scripts/links/**
-<<<<<<< HEAD
 Documents/scripts/rc/local/**
-=======
 Documents/scripts/rc/local/**
 
 
@@ -52,4 +50,3 @@ Music/*
 Pictures/*
 Public/*
 links/*
->>>>>>> 6bec2128dc07e83c8766f34540e9727f39a98578
