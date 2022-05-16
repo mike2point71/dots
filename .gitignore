@@ -5,7 +5,6 @@
 .ssh/*
 Documents/scripts/links/**
 Documents/scripts/rc/local/**
-Documents/scripts/rc/local/**
 
 
 .AzureToolsForIntellij/*
