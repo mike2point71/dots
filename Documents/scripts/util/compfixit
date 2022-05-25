@@ -1,0 +1,5 @@
+#! /bin/zsh
+# vim: set ft=zsh:ts=2:et:
+
+. /usr/share/zsh/$(zsh --version | cut -d ' ' -f 2)/functions/compaudit
+compaudit | gxargs -I %%%%% chmod -R 755 "%%%%%"

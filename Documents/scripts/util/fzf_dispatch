@@ -1,0 +1,4 @@
+#! /bin/sh
+# vim: set ft=sh:ts=2:et:
+
+bat --color=always --style=header,grid --line-range :300 $*

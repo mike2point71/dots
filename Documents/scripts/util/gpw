@@ -1,0 +1,1 @@
+security find-generic-password -a "$1" -s "$2" -w

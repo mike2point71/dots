@@ -25,6 +25,13 @@ need -v exa && {
 	  exa --oneline --classify --tree --long --binary --group --header --links --inode --modified --blocks --git --group-directories-first --sort=name --icons --color=always --color-scale --level=${lvl:-1} ${randoParams[@]} "$pathVal"
   }
 
+  export AUTO_LS_COMMANDS=(x)
+
+  function auto-ls-x () {
+    x
+    [[ $AUTO_LS_NEWLINE != false ]] && echo ""
+  }
+
   function xa(){
       x -a $*
   }

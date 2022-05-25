@@ -1,3 +1,6 @@
+[include]
+    path=Documents/local/.gitconfig.local
+
 [core]
 	autocrlf = input
 	pager = delta
@@ -83,5 +86,6 @@
     zero-style = syntax
     blame-format = "{author:<18} ({commit:>7}) ┊{timestamp:^16}┊ "
     blame-palette = "#101010 #200020 #002800 #000028 #202000 #280000 #002020 #002800 #202020"
+
 
 

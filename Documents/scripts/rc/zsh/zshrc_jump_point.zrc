@@ -8,6 +8,7 @@ loud='loud'
 
 export MK_SCRIPTS="$DOCSFLDR/scripts"
 export LOCAL_RC_FOLDER="$MK_SCRIPTS"/rc/local
+export MODS_FOLDER="$MK_SCRIPTS"/rc/modules
 export ZSHRC_FOLDER="$MK_SCRIPTS"/rc/zsh
 export NANO_DATE_FORMAT="+%s.%N"
 
@@ -94,6 +95,17 @@ source_R "$ZSHRC_FOLDER"/source_files_then_directories
 [ -d "$LOCAL_RC_FOLDER" ] && source_R "$LOCAL_RC_FOLDER"
 
 source_timed "$ZSHRC_FOLDER"/source_specifically/do_last.rc
+
+# zpluggies="$ZSHRC_FOLDER"/source_specifically/random_zsh_plugins
+
+z_plugins=(clipboard auto-ls)
+
+for z_plugin in $z_plugins; do
+  [ -d "$MODS_FOLDER"/"$z_plugin" ] && source_timed "$MODS_FOLDER"/"$z_plugin"/"$z_plugin".plugin.zsh
+done
+
+
+
 
 
 
