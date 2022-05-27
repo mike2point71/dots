@@ -4,5 +4,5 @@
 # chmod -R 777 "$DOCSFLDR"/scripts
 # chmod -R 777 "$DOCSFLDR"/bin
 
-fd --type file --exclude marlonrichert --exec chmod 777 {} \; . "$DOCSFLDR"/scripts
+fd --type file --exclude rc/modules --exec chmod 777 {} \; . "$DOCSFLDR"/scripts
 fd --type file --exec chmod 777 {} \; . "$DOCSFLDR"/bin

@@ -222,3 +222,11 @@ cert_tasks
 .config/delta.themes
 .npmrc
 Documents/scripts/util/teams_call
+.DS_Store
+Documents/scripts/eishelpers
+.config/.jira/.config.yml
+.minikube/logs/lastStart.txt
+dq_rerun.FAIL
+revist_these_guy.filelist
+testjunk
+Documents/scripts/eishelpers
