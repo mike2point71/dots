@@ -1,0 +1,14 @@
+#! /bin/sh
+# vim: set ft=sh:ts=2:et:
+
+
+dumpster="$HOME"/Documents/rmtrash
+trashbag="$dumpster/$(gdate +%F%H%M%S).dumpster.tar"
+tf=$(mktemp)
+pwd >> "$tf"
+tar -cf "$trashbag" 
+
+while [ $# -gt 0 ] && [ -e "$1" ]; do
+  tar -cvf "$trashcan/$(echo "$1" | sed 's:/:SLASH:g' | tr -Cd "[:alnum:].-_").tar" && rm -rf "$1"
+  shift
+done

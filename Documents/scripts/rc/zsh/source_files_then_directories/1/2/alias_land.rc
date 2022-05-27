@@ -12,6 +12,7 @@ need jbang && {
 need_free -v 'gcam' && alias gcam='git commit -am'
 need_free -v 'gp' && alias gp='git pull'
 need_free -v 'gpo' && alias gpo='git push origin'
+need_free -v 'gnom' && alias gnom="git remote show \$(git remote) | gawk '/HEAD branch/ {print \$NF}'"
 
 
 # Dotfiles config shortcuts
@@ -48,15 +49,21 @@ need -v pps && alias pps='sudo pps'
 need -v procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
 need -v zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
 need -v glances && need_free -v 'mpg' && alias mpg='sudo glances'
-need -v htop && need_free -v 'mtop' && alias mtop='sudo htop'
+need -v htop && {
+  need_free -v 'mtop' && alias mtop='sudo htop'
+  alias htop='sudo htop'
+}
 need -v px && {
   need_free -v 'mpx' && alias mpx='sudo px'
   need_free -v 'mpxt' && alias mpxt='sudo px --top'
+  alias ptop='sudo ptop'
 }
 need "$HOME/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
 
 # Climate might be stupid?  Maybe I need to use it more...
 need climate && need_free -v c && alias c='climate'
+
+need -v quickserve && need_free -v qs && alias qs='quickserve'
 
 # Hex viewer
 need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
@@ -68,6 +75,8 @@ need -v python3 && {
   need_free -v p3 && alias p3='python3'
   need pip && alias pip='python3 -m pip'
 }
+
+need emoji-fzf && need fzf && need_free -v efp && alias efp="emoji-fzf preview | fzf"
 
 alias ...=../..
 alias ....=../../..

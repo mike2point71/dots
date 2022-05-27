@@ -2,6 +2,7 @@
 # vim: set ft=zsh:ts=2:et:
 
 need -v brew && export BPRE="$(brew --prefix)"
+export DOTFILES_DIR="$HOME/.dotfiles"
 
 export LC_ALL=en_US.UTF-8
 
@@ -46,7 +47,9 @@ need -v go && {
   test -d "${go_github}" || mkdir -p "${go_github}" || echo "Failed to mkdir (go_github) ${go_github}"
 }
 
-need -v fzf && need -v bat && export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+need -v fzf && {
+  need -v bat && export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'fzf_dispatch {}'"
+}
 
 
 

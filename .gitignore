@@ -1,10 +1,12 @@
 # Exclude globs
 
 **/.DS_Store
+**/.idea/**
+**/venv/**
+**/incomplete/**
 **/.idea/
 **/venv/
 **/incomplete/
-.ssh/
 Documents/scripts/macos/brew_cav_*
 java_error_in_idea_*
 *.log
@@ -137,6 +139,7 @@ OneDrive
 .rvm/
 .sbt/
 .sdkman/
+.ssh/
 .sonarlint/
 .subversion/
 .swiftpm/
@@ -177,6 +180,7 @@ Documents/scripts/linkablewiggle/
 Documents/scripts/learning/
 Documents/scripts/rc/local/
 Documents/scripts/rc/gradle/lib/
+Documents/scripts/util/local/
 Documents/scripts/util/whacky/
 Documents/unsorted_mess/
 Documents/workspaces/
@@ -205,3 +209,24 @@ bettersniff
 haxor.xtf
 
 Documents/scripts/util/macos_screentime
+Documents/scripts/eishelpers
+Documents/local/.gitconfig.local
+Documents/notes/
+Documents/permitme.xlsx
+Documents/scripts/rc/eis-curation-local-cyberdyne/
+Documents/junk.idea.tar
+Documents/ts01.xlsx
+OneDrive - The Kroger Co
+cert_tasks
+.gitignore.orig
+.config/delta.themes
+.npmrc
+Documents/scripts/util/teams_call
+.DS_Store
+Documents/scripts/eishelpers
+.config/.jira/.config.yml
+.minikube/logs/lastStart.txt
+dq_rerun.FAIL
+revist_these_guy.filelist
+testjunk
+Documents/scripts/eishelpers

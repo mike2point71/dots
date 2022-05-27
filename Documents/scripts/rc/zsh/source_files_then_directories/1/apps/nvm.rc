@@ -4,12 +4,21 @@
 nvmsh="/opt/homebrew/opt/nvm/nvm.sh"
 export NVM_DIR="$HOME/.nvm"
 lazyLoadNvm(){
+  allTerms="$*"
+  firstTerm="${allTerms%% *}"
+  remainingTerms="${allTerms#* }"
   unalias nvm
+  unalias npm
+  unalias node
   source "$nvmsh"
-  nvm $*
+  $firstTerm $remainingTerms
 }
 
-[ -r "$nvmsh" ] && alias nvm=lazyLoadNvm
+[ -r "$nvmsh" ] && {
+  alias nvm=lazyLoadNvm nvm
+  alias npm=lazyLoadNvm npm
+  alias node=lazyLoadNvm node
+}
 
 
 
