@@ -7,6 +7,3 @@
 [submodule "Documents/scripts/rc/modules/auto-ls"]
 	path = Documents/scripts/rc/modules/auto-ls
 	url = git@github.com:desyncr/auto-ls.git
-[submodule "Documents/scripts/eishelpers"]
-	path = Documents/scripts/eishelpers
-	url = git@github.com:krogertechnology/eis-curation-helpful-helpers.git
