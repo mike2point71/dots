@@ -1,4 +1,120 @@
-#! /bin/sh
-# vim: set ft=sh:ts=2:et:
+#! /bin/zsh
+# vim: set ft=zsh:ts=2:et:
 
-bat --color=always --style=header,grid --line-range :300 $*
+declare -A optios=([noise]=quiet [dry]=wet)
+while [ "$#" -gt 1 ]; do
+  case "$1" in
+    -v|--verbose)
+      optios+=([noise]=loud)
+      shift
+    ;;
+    -d|--dry)
+      optios+=([noise]=loud)
+      optios+=([dry]=dry)
+      shift
+    ;;
+    *)
+      break
+    ;;
+  esac
+done
+
+[ "$optios[noise]" = 'loud' ] && echo "Options: $optios"
+param="$*"
+[ "$optios[noise]" = 'loud' ] && echo "param: $param"
+# case "$1" in
+#   -v|--verbose)
+#     noise='loud'
+#     shift
+#   ;;
+#   -d|--dry)
+#     dry='dry'
+#     shift
+#   ;;
+# esac
+# if [ "$1" = '-v' ]; then
+#   noise='loud'
+#   shift
+# fi
+
+function unknownShortMime(){
+  if bat --style=header --line-range=20 "$param" | grep -e '<BINARY>' >/dev/null 2>/dev/null; then
+    dispatchTo soHexy
+  else
+    dispatchTo flyingCat 
+  fi
+}
+
+
+function hellaMacho(){
+  bingrep "$param" | less -R
+}
+
+function flyingCat(){
+  bat --force-colorization --theme=ansi --style=header,grid,full --line-range :300 "$param"
+}
+
+function soHexy(){
+  {
+    # if [ -n "${1:+x}" ]; then echo "$1"; fi
+    hexyl --border none "$param"
+  } | less -R
+}
+
+function directo(){
+  exa --oneline --classify --tree --long --binary --header --modified --git --group-directories-first --sort=name --icons --color=always --color-scale --level=1 "$param" 
+}
+
+function markitdown(){
+  mdcat -p "$param"  
+}
+
+function sqLiteStyle(){
+  rp="$(realpath "$param")"
+  output1="$(2>&1 sqlite3 -table "$rp" '.tables')"
+  print "rp is $rp and output1 is $output1"
+  
+  # if echo "$output1" | head -n 1 | grep -e 'database is locked' >/dev/null; then
+  #   dispatchTo soHexy "Database is locked"
+  # else
+  #   echo "$output1"
+  # fi
+  # termdbms -d sqlite -p "$(realpath "$param")"
+}
+
+function gettinVisiWithIt(){
+  vd "$(realpath "$param")"
+}
+
+function dispatchTo(){
+  [ "$optios[noise]" = 'loud' ] && echo "$1 chosen"
+  [ "$optios[dry]" = 'wet' ] && $1 "$2"
+}
+
+
+# fileAnswer=($(file -b "$param"))
+# fileAnswer1="${fileAnswer[1]}"
+shortMime=$(file -b --mime-type "$param" | head -1)
+fileExtension="$param:e"
+
+case "$shortMime" in
+  'text/plain')
+    case "$fileExtension" in
+      'md') dispatchTo markitdown;;
+      *) dispatchTo flyingCat;; 
+    esac
+  ;;
+  'inode/directory') dispatchTo directo;;
+  'text/xml') dispatchTo flyingCat;;
+  'application/x-mach-binary') dispatchTo hellaMacho;;
+  'application/octet-stream') dispatchTo soHexy;;
+  'application/vnd.sqlite3') dispatchTo sqLiteStyle;;
+   *) dispatchTo unknownShortMime;;
+esac  
+
+[ "$optios[noise]" = 'loud' ] && {
+  printf 'shortMime: ***%s***\n' "$shortMime"
+  printf 'fileExtension: %s\n' "$fileExtension"
+  # printf 'fileAnswer: %s\n' "$fileAnswer"
+  # printf 'fileAnswer1: %s\n' "$fileAnswer1"
+}

@@ -4,6 +4,7 @@
 import functools
 import locale
 from typing import NamedTuple, List
+import click
 
 import psutil
 from collections import namedtuple
@@ -34,6 +35,10 @@ class Timey:
     @classmethod
     def zero(cls):
         return Timey(0.0, 0.0, 0.0)
+
+    @classmethod
+    def not_zero(cls):
+        return Timey(0.0001, 0.0001, 0.0001)
 
     def __init__(self, longev: float, u: float, s: float):
         self.longevity = longev
@@ -80,6 +85,43 @@ class ByteCount:
         return ByteCount(self.value)
 
 
+def byte_count_test():
+    tests = {
+        0: "0MB",
+        1: "0MB",
+        9: "0MB",
+        10: "0MB",
+        11: "0MB",
+        99: "0MB",
+        100: "0MB",
+        101: "0MB",
+        999: "0MB",
+        1000: "0MB",
+        1001: "0MB",
+        9999: "0MB",
+        10_000: "0MB",
+        10_001: "0MB",
+        99_999: "0MB",
+        100_000: "0MB",
+        100_001: "0MB",
+        999_999: "0MB",
+        1_000_000: "1MB",
+        1_000_001: "1MB",
+        9_999_999: "9MB",
+        10_000_000: "10MB",
+        10_000_001: "10MB",
+        99_999_999: "99MB",
+        100_000_000: "100MB",
+        100_000_001: "100MB",
+        999_999_999: "999MB",
+        1_000_000_000: "1000MB",
+        1_000_000_001: "1000MB",
+        9_999_999_999: "9999MB",
+    }
+    for k, v in tests.items():
+        assert str(ByteCount(k)) == v
+
+
 class RamMeas:
     # rss: ByteCount
     # # uss: ByteCount
@@ -122,6 +164,10 @@ class RamMeas:
     def __str__(self):
         return f"{self.rss}, {self.pageins}, {self.pfaults}"
 
+    @functools.cached_property
+    def rssnum(self) -> str:
+        return str(self.rss)
+
     def clone(self) -> 'RamMeas':
         return RamMeas(
             self.rss.value,
@@ -151,18 +197,31 @@ class Procaroo():
     bigdict = {}
     ALL_RAM = RamMeas.zero()
     DISPLAY_LIST: List['Procaroo'] = []
+    WEIGHT = ''
+    EIGHTH = 0
+    BAR_STYLE = '[white][bold]'
+    ALT_STYLE = '[dim]'
+    BLOCK_BUILDER = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
+    RUNNING_TOTAL = {
+        'r': RamMeas.zero(),
+        'p': 0,
+        'c': 0,
+        'a': 0
+    }
 
     def __init__(self, pp: psutil.Process):
+        # self.displayabe = None
         self.pid: str = str(pp.pid)
         self.ppid: int = pp.ppid()
         self.name: str = pp.name()
         self.c: List['Procaroo'] = []
         self.r: RamMeas = RamMeas.from_m(pp.memory_info())
         self.t: Timey = Timey.from_p(pp)
-        self.display_me = self.ppid == 1
+        self.not_a_child = True
+        # self.display_me = self.ppid == 1
+        self.a: List['Procaroo'] = []
         Procaroo.ALL_RAM += self.r
-        if self.display_me:
-            Procaroo.DISPLAY_LIST.append(self)
+
         # if my_parent := Procaroo.bigdict[self.ppid]:
         #     self.parent = my_parent
         #     self.parent.c.append(self)
@@ -192,25 +251,66 @@ class Procaroo():
     # def add_child(self, child: 'Procaroo'):
     #     self.c.append(child)
 
+    LAST_BAR_STR = ''
+
+    def ram_to_block_string(self):
+        Procaroo.RUNNING_TOTAL['r'] += self.r
+        scaled = Procaroo.RUNNING_TOTAL['r'].rss.value / Procaroo.EIGHTH
+        full_blocks = floor(scaled)
+        partial_block = Procaroo.BLOCK_BUILDER[floor((scaled - full_blocks) * 8)]
+        Procaroo.LAST_BAR_STR = f"{'█' * full_blocks}{partial_block}"
+        return Procaroo.LAST_BAR_STR
+
+    @functools.cached_property
+    def am_child(self) -> bool:
+        return not self.not_a_child
+
+    @functools.cached_property
+    def parent_pid(self):
+        return self.ppid
+
+    @functools.cached_property
+    def proper_name(self):
+        return self.name
+
+    @functools.cached_property
+    def count_c(self):
+        return sum([x.count_c + 1 for x in self.c])
+
+    @functools.cached_property
+    def count_a(self):
+        return sum([x.count_c + 1 for x in self.a])
+
     @functools.cached_property
     def desc(self):
         return f"{self.name}({self.pid})"
 
     @functools.cached_property
     def total_child_ram(self) -> RamMeas:
-        return sum([x.r for x in self.c], RamMeas.zero())
+        return sum([x.total_ram for x in self.c], RamMeas.zero())
+
+    @functools.cached_property
+    def total_aggregated_ram(self) -> RamMeas:
+        return sum([x.total_ram for x in self.a], RamMeas.zero())
 
     @functools.cached_property
     def total_ram(self) -> RamMeas:
-        return self.total_child_ram + self.r
+        return self.total_child_ram + self.total_aggregated_ram + self.r
 
     @functools.cached_property
     def total_child_time(self) -> Timey:
         return sum([x.t for x in self.c], Timey.zero())
 
     @functools.cached_property
+    def total_aggregated_time(self) -> Timey:
+        return sum([x.t for x in self.a], Timey.zero())
+
+    @functools.cached_property
     def total_time(self):
-        return self.total_child_time + self.t
+        temp_t = self.total_child_time + self.total_aggregated_time + self.t
+        if temp_t.s_time > 0 and temp_t.u_time > 0 and temp_t.longevity > 0:
+            return temp_t
+        return Timey.not_zero()
 
     @functools.cached_property
     def sort_value(self) -> int:
@@ -219,16 +319,16 @@ class Procaroo():
 
     @functools.cached_property
     def ram_time(self) -> float:
-        return total if (total := self.total_ram.rss.value * self.total_time.s_time) > 0 else 1/1_000_000_000
+        return total if (total := self.r.rss.value * self.t.s_time) > 0 else 1 / 1_000_000_000
 
     @functools.cached_property
     def pf_ram_time(self):
-        tiny_number = (self.total_ram.pfaults / self.ram_time)
+        tiny_number = (self.r.pfaults / self.ram_time)
         return f"{floor(tiny_number * 1000000000):n}"
 
     @functools.cached_property
     def pf_abs_int(self):
-        tiny_number = (self.total_ram.pfaults / self.t.longevity)
+        tiny_number = (self.r.pfaults / self.t.longevity)
         return floor(tiny_number * 1000)
 
     @functools.cached_property
@@ -236,10 +336,84 @@ class Procaroo():
         return f"{self.pf_abs_int:n}"
 
     @functools.cached_property
-    def breakdown(self) -> str:
-        return (f"{self.r} + {self.total_child_ram} from {len(self.c)}" if
-                len(self.c) > 0 else
-                f"{self.r}")
+    def total_ram_time(self) -> float:
+        return total if (total := self.total_ram.rss.value * self.total_time.s_time) > 0 else 1 / 1_000_000_000
+
+    @functools.cached_property
+    def total_pf_ram_time(self):
+        tiny_number = (self.total_ram.pfaults / self.total_ram_time)
+        return f"{floor(tiny_number * 1000000000):n}"
+
+    @functools.cached_property
+    def total_pf_abs_int(self):
+        tiny_number = (self.total_ram.pfaults / self.total_time.longevity)
+        return floor(tiny_number * 1000)
+
+    @functools.cached_property
+    def total_pf_abs(self):
+        return f"{self.total_pf_abs_int:n}"
+
+    # @functools.cached_property
+    # def breakdown(self) -> str:
+    #     rstr = f"{self.r}"
+    #     if len(self.c) > 0:
+    #         rstr +=
+    #     if len(self.a) > 0:
+    #         rstr += f" + {self.total_aggregated_ram}({len(self.a)}a)"
+    #     return rstr
+
+    # return (f"{self.r} + {self.total_child_ram} + {self.total_aggregated_ram} from {len(self.c)}&{len(self.a)}" if
+    #         len(self.c) > 0 or len(self.a) > 0 else
+    #         f"{self.r}")
+
+    @functools.cached_property
+    def child_breakdown(self) -> str:
+        return f"{self.total_child_ram}({len(self.c)})"
+
+    @functools.cached_property
+    def aggregate_breakdown(self) -> str:
+        return f"{self.total_aggregated_ram}({len(self.a)})"
+
+    @functools.cached_property
+    def have_children_or_aggregates(self) -> bool:
+        return len(self.c) > 0 or len(self.a) > 0
+
+    def my_row(self, table, indent=0):
+        my_indent = indent
+        mutable_style = Procaroo.ALT_STYLE if self.am_child else Procaroo.WEIGHT
+
+        if self.have_children_or_aggregates and indent < 1:
+            table.add_row(
+                f"{Procaroo.ALT_STYLE}{Procaroo.LAST_BAR_STR}",
+                f"{Procaroo.ALT_STYLE}{self.total_ram.rssnum}",
+                f"{Procaroo.WEIGHT}[green]{self.proper_name} + {self.count_c}/{self.count_a}",
+                "",
+                "",
+                "",
+                "",
+                # f"{Procaroo.ALT_STYLE}{self.total_ram}",
+                # f"{Procaroo.ALT_STYLE}{self.total_pf_ram_time}",
+                # f"{Procaroo.ALT_STYLE}{self.total_pf_abs}",
+                # f"{weight}[cyan]{p.desc}",
+            )
+            my_indent = indent + 1
+
+        table.add_row(
+            f"{Procaroo.BAR_STYLE}{self.ram_to_block_string()}",
+            f"{Procaroo.WEIGHT}{self.r.rssnum}",
+            f"{mutable_style}{'  ' * my_indent}[cyan]{self.proper_name}",
+            f"{Procaroo.WEIGHT}{self.pid}",
+            f"{Procaroo.WEIGHT}{self.r}",
+            f"{Procaroo.WEIGHT}{self.pf_ram_time}",
+            f"{Procaroo.WEIGHT}{self.pf_abs}",
+            # f"{weight}[cyan]{p.desc}",
+        )
+
+        my_childrens_indent = my_indent + 1
+        for c in self.c:
+            c.my_row(table, my_childrens_indent)
+        for a in self.a:
+            a.my_row(table, my_indent)
 
     def __str__(self):
         return f"PID: {self.pid}, PPID: {self.ppid}, Name: {self.name}"
@@ -260,30 +434,46 @@ class Procaroo():
 #     i: bool
 
 # PG = namedtuple("PG", ['ps', 'm', 'c', 'i'])
-for ps_i in psutil.process_iter(['pid', 'ppid', 'name', 'create_time', 'cpu_times']):
-    try:
-        # print(ps)
-        # m = ps.memory_info_ex()
-        # m = ps_i.memory_info()
-        # mf = ps.memory_full_info()
-        # print(f"m:{m}")
-        # print(f"mf:{mf}")
-        # print(f"{m.rss}, {m.lib}, {m.vms}, {m.data}, {m.dirty}, {m.private}, {m.shared}, {m.text}, {m.wset}, {m.}")
-        # print(f"{m.paged_pool}/{m.peak_paged_pool}, {m.nonpaged_pool}/{m.peak_nonpaged_pool}, {m.pagefile}/{m.peak_pagefile}")
-        # print(f"{m.pageins}-{m.pfaults}/{m.num_page_faults}, {m.}     {m.peak_wset},
-        # print()
-        Procaroo.bigdict[ps_i.pid] = pg = Procaroo(ps_i)  # , m, [], False if ps_i.ppid() != 1 else True)
-        # print('did a thing')
-        if parent := Procaroo.bigdict.get(ps_i.ppid()):
-            # print("its true")
-            parent.c.append(pg)
-            # print('privacy or something?')
-            if pg.ppid != 1:
-                pg.display_me = False
-            # pg.display_me = not ps_i.ppid() == 1
 
-    except Exception as e:
-        print(f"Exception 1 handling process {ps_i.pid}: {e}")
+def read_procs():
+    for ps_i in psutil.process_iter(['pid', 'ppid', 'name', 'create_time', 'cpu_times']):
+        try:
+            # print(ps)
+            # m = ps.memory_info_ex()
+            # m = ps_i.memory_info()
+            # mf = ps.memory_full_info()
+            # print(f"m:{m}")
+            # print(f"mf:{mf}")
+            # print(f"{m.rss}, {m.lib}, {m.vms}, {m.data}, {m.dirty}, {m.private}, {m.shared}, {m.text}, {m.wset}, {m.}")
+            # print(f"{m.paged_pool}/{m.peak_paged_pool}, {m.nonpaged_pool}/{m.peak_nonpaged_pool}, {m.pagefile}/{m.peak_pagefile}")
+            # print(f"{m.pageins}-{m.pfaults}/{m.num_page_faults}, {m.}     {m.peak_wset},
+            # print()
+            Procaroo.bigdict[ps_i.pid] = pg = Procaroo(ps_i)  # , m, [], False if ps_i.ppid() != 1 else True)
+            # print('did a thing')
+            if pg.ppid != 1 and (ancestor := Procaroo.bigdict.get(ps_i.ppid())):
+                # count = 0
+                # while ancestor and not ancestor.displayable:
+                #     count = count + 1
+                #     if count > 5:
+                #         print(f"what's up with {pg.desc}")
+                #
+                #     ancestor = Procaroo.bigdict.get(ancestor.parent_pid)
+                # print("its true")
+                # if ancestor:
+                pg.not_a_child = False
+                ancestor.c.append(pg)
+                # if not parent.display_me:
+                #     raise Exception("parent is not displayable")
+                # print('privacy or something?')
+                # if pg.ppid != 1:
+                #     pg.display_me = False
+                # pg.display_me = not ps_i.ppid() == 1
+            if pg.not_a_child:
+                Procaroo.DISPLAY_LIST.append(pg)
+
+        except Exception as e:
+            print(f"Exception 1 handling process {ps_i.pid}: {e}")
+
 
 # def nice_number(num):
 #     snum = str(num)
@@ -355,42 +545,99 @@ for ps_i in psutil.process_iter(['pid', 'ppid', 'name', 'create_time', 'cpu_time
 #     return x.total_ram().rss.value
 
 
-Procaroo.DISPLAY_LIST.sort(key=lambda x: x.sort_value)
-odds = False
-table = Table(title="Processes")
+def add_p_r(itake, igive):
+    if childs := igive.c:
+        for child in childs:
+            add_p_r(itake, child)
+    itake.a.append(igive)
 
-# table.add_column("PID", justify="right", no_wrap=True)
-table.add_column("Percent", justify="left", width=8)
-table.add_column("RAM", justify="right")
-table.add_column("PF/RamTime", justify='right')
-table.add_column("PFABS", justify='right')
-table.add_column("Name", justify="left")
-# weights = ['[dim]', '', '[bold]', '[bold]']
-running_total = RamMeas.zero()
-# multiplier = 3 / grand_total
-eighth = Procaroo.ALL_RAM.rss.value / 8
-sixfour = eighth / 8
-block_builder = [' ', '▏', '▎', '▍', '▌', '▋', '▊', '▉']
-bar_style = '[bold bright yellow]'
-for p in Procaroo.DISPLAY_LIST:
-    running_total += p.total_ram
-    rt2 = running_total.rss.value
-    scaled = rt2 / eighth
-    full_blocks = floor(scaled)
-    partial_block = block_builder[floor((scaled - full_blocks) * 8)]
-    # weight = weights[floor(running_total * multiplier)]
-    weight = ''
-    table.add_row(
-        f"{bar_style}{'█' * full_blocks}{partial_block}",
-        # f"{weight}{p['pid']}",
-        f"{weight}{p.total_ram}",
-        f"{weight}{p.pf_ram_time}",
-        f"{weight}{p.pf_abs}",
-        f"{weight} [cyan]{p.desc}  {weight} [white]{p.breakdown}",
-    )
-table.add_row("[red]Total ->", f"{str(Procaroo.ALL_RAM.rss)}")
-console = Console()
-console.print(table)
+
+def aggregate_procs():
+    Procaroo.BACKUP_LIST = Procaroo.DISPLAY_LIST
+    Procaroo.DISPLAY_LIST = []
+    name_map = {}
+    for p in Procaroo.BACKUP_LIST:
+        if p.name not in name_map:
+            name_map[p.name] = p
+            Procaroo.DISPLAY_LIST.append(p)
+        else:
+            ogp = name_map[p.name]
+            add_p_r(ogp, p)
+            # else:
+            #     raise Exception("parent is not displayable")
+            # ogp.c.append(p)
+            # name_map[p.name].total_ram += p.total_ram()
+            # name_map[p.name].c += p.c
+
+
+def sort_procs():
+    Procaroo.DISPLAY_LIST.sort(key=lambda x: x.sort_value)
+
+
+def display_procs():
+    # last_barstr = ''
+    # odds = False
+    table = Table(title="Processes")
+
+    # table.add_column("PID", justify="right", no_wrap=True)
+    table.add_column("Percent", justify="left", width=8)
+    table.add_column("RAM", justify="right")
+    table.add_column("Name", justify="left")
+    table.add_column("PID", justify="left")
+    table.add_column("Page Hits&Faults", justify="right")
+    table.add_column("PF/RamTime", justify='right')
+    table.add_column("PFABS", justify='right')
+    # table.add_column("breakdown", justify='right')
+
+    # weights = ['[dim]', '', '[bold]', '[bold]']
+    # running_total = RamMeas.zero()
+    # running_total_pp = 0
+    # running_total_pc = 0
+    # running_total_pa = 0
+    # multiplier = 3 / grand_total
+    # sixfour = eighth / 8
+
+    for p in Procaroo.DISPLAY_LIST:
+        # running_total_pp += 1
+        # running_total_pc += p.count_c
+        # running_total_pa += p.count_a
+        # running_total += p.r
+        # weight = weights[floor(running_total * multiplier)]
+
+        # barstr = ram_to_block_string(running_total.rss.value)
+        p.my_row(table)
+        # if p.count_c > 0:
+        #     running_total += p.total_child_ram
+        #     barstr = ram_to_block_string(running_total.rss.value)
+        #     table.add_row(
+        #         f"{ALT_STYLE}{barstr}",
+        #         f"{WEIGHT}{p.total_child_ram.rssnum}",
+        #         f"{WEIGHT} from {p.count_c} children ({round((p.total_child_ram.rss.value / p.total_ram.rss.value) * 100)}%)",
+        #         "",
+        #         f"{WEIGHT}{p.child_breakdown}",
+        #         "",
+        #         "",
+        #     )
+        # if p.count_a > 0:
+        #     running_total += p.total_aggregated_ram
+        #     barstr = ram_to_block_string(running_total.rss.value)
+        #     table.add_row(
+        #         f"{ALT_STYLE}{barstr}",
+        #         f"{WEIGHT}{p.total_aggregated_ram.rssnum}",
+        #         f"{WEIGHT} from {p.count_a} aggregated ({round((p.total_aggregated_ram.rss.value / p.total_ram.rss.value) * 100)}%)",
+        #         "",
+        #         f"{WEIGHT}{p.aggregate_breakdown}",
+        #         "",
+        #         "",
+        #     )
+        # last_barstr = barstr
+    table.add_row("[red]Total ->", f"{str(Procaroo.ALL_RAM.rss)}")
+    console = Console()
+    console.print(table)
+    print(f"{Procaroo.RUNNING_TOTAL['p'] + Procaroo.RUNNING_TOTAL['c'] + Procaroo.RUNNING_TOTAL['a']} processes.")
+    print(
+        f"{Procaroo.RUNNING_TOTAL['p']}/{Procaroo.RUNNING_TOTAL['c']}/{Procaroo.RUNNING_TOTAL['a']} top/children/aggregated")
+
 
 # mem_tuple = psutil.virtual_memory()
 # m_ttl = mb_string(mem_tuple.total)
@@ -408,4 +655,23 @@ console.print(table)
 # print(m_ttl)
 # print(f"RAM.  Total: {m_ttl}. Used: {m_used}. Free: {m_free}")
 # print(f"SWAP. Total: {s_t}. Used: {s_u}. Free: {s_f}. In: {s_i}. Out: {s_o}")
-print(f"Took: {time() - start_time}")
+# @click.command()
+# @click.option('--aggregate', '-a', is_flag=True, default=False)
+@click.command()
+@click.option('--test', '-t', is_flag=True, default=False)
+def do_program(test, aggregate='who cares'):
+    if test:
+        byte_count_test()
+        exit(0)
+
+    read_procs()
+    Procaroo.EIGHTH = Procaroo.ALL_RAM.rss.value / 8
+    # if aggregate:
+    aggregate_procs()
+    sort_procs()
+    display_procs()
+    print(f"Took: {time() - start_time}seconds.  (I think it's seconds...)")
+
+
+if __name__ == '__main__':
+    do_program()

@@ -4,6 +4,8 @@
 need -v brew && export BPRE="$(brew --prefix)"
 export DOTFILES_DIR="$HOME/.dotfiles"
 
+export PS_o=(pid pmem rss cputime ruid ppid ucomm)
+
 export LC_ALL=en_US.UTF-8
 
 [ -d /opt/homebrew/opt/libffi ] && {
@@ -48,12 +50,13 @@ need -v go && {
 }
 
 need -v fzf && {
-  need -v bat && export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:60%' --preview 'fzf_dispatch {}'"
+  need -v bat && export FZF_DEFAULT_OPTS="--ansi --preview-window 'right:40%' --preview='fzf_dispatch {}'"
 }
 
 
 
 export _ZO_DATA_DIR="$HOME/.zoxide"
+export _ZO_FZF_OPTS="--ansi --preview='fzf_dispatch {2..-1}'"
 
 export PM="$MK_SCRIPTS/install/package_manager/pm"
 export PACKAGE_MANAGER=brew

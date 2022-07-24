@@ -19,7 +19,7 @@ path_array=(
   /opt/homebrew/opt/texinfo/bin
   "$HOME"/.cargo/bin
   "$HOME"/.sdkman/candidates/gradle/current/bin/
-  "$DOCSFLDR"/bin
+  "$HOME"/bin
   /opt/homebrew/opt/ruby/bin
   /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin
   /opt/homebrew/opt/tcl-tk/bin
@@ -80,6 +80,8 @@ function source_R () {
 }
 
 add2fpath=(
+  "$DOCSFLDR"/completions
+  /Users/m/.twilio-cli/autocomplete/functions/zsh
   /opt/homebrew/share/zsh-completions
   /opt/homebrew/completions/zsh/_zsh
   /opt/homebrew/share/zsh/site-functions

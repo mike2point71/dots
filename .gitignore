@@ -62,6 +62,7 @@ java_error_in_idea_*
 .zsh_history
 .zshrc
 Documents/.localized 
+Documents/magicnumber
 Documents/scripts/scratch
 OneDrive
 
@@ -223,10 +224,14 @@ cert_tasks
 .npmrc
 Documents/scripts/util/teams_call
 .DS_Store
-Documents/scripts/eishelpers
 .config/.jira/.config.yml
 .minikube/logs/lastStart.txt
 dq_rerun.FAIL
 revist_these_guy.filelist
 testjunk
-Documents/scripts/eishelpers
+Documents/aaa/shiny-octo-rotary-phone/
+Documents/NoMachine/buntr.nxs
+Documents/3trashbound/
+Documents/2share/
+.yarn/**/cache/
+.nx/

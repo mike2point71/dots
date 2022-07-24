@@ -1,3 +1,9 @@
+[style.logpercent]
+color_000 = "BrightBlue|Blue"
+color_001 = "BrightGreen|Green"
+color_005 = "BrightYellow|Yellow"
+color_010 = "BrightRed|Red"
+
 [[columns]]
 kind = "Pid"
 style = "BrightYellow|Yellow"
@@ -34,18 +40,25 @@ nonnumeric_search = true
 align = "Left"
 
 [[columns]]
-kind = "VmSize"
-style = "BrightYellow|Yellow"
+kind = "Tty"
+style = "BrightWhite|Black"
 numeric_search = false
-nonnumeric_search = true
+nonnumeric_search = false
 align = "Left"
 
 [[columns]]
-kind = "VmRss"
-style = "BrightYellow|Yellow"
+kind = "UsageCpu"
+style = "logpercent"
 numeric_search = false
-nonnumeric_search = true
-align = "Left"
+nonnumeric_search = false
+align = "Right"
+
+[[columns]]
+kind = "UsageMem"
+style = "logpercent"
+numeric_search = false
+nonnumeric_search = false
+align = "Right"
 
 [[columns]]
 kind = "Threads"
@@ -70,14 +83,6 @@ align = "Left"
 
 [[columns]]
 kind = "Separator"
-style = "BrightYellow|Yellow"
-numeric_search = false
-nonnumeric_search = true
-align = "Left"
-
-
-[[columns]]
-kind = "User"
 style = "BrightYellow|Yellow"
 numeric_search = false
 nonnumeric_search = true
@@ -129,6 +134,8 @@ align = "Left"
 header = "BrightWhite|Black"
 unit = "BrightWhite|Black"
 tree = "BrightWhite|Black"
+
+
 
 [style.by_percentage]
 color_000 = "BrightBlue|Blue"

@@ -1,0 +1,40 @@
+
+--one-file-system
+
+# Show UI immediately, and update it will indexing
+-2
+--confirm-quit
+
+# To look ballin' on a black terminal and make no sense on a lighter one
+--color dark
+
+# update every 2 seconds or something.  --fast-ui-updates is 10X/sec i think.
+--slow-ui-updates
+
+# can launch a shell from ncdu then get confused and run ncdu in that shell.  Yay!
+--enable-shell
+
+# some button to enable delete.  At least we're going to be reasonable and ask for confirmation.
+--enable-delete
+--confirm-delete
+
+# Seems reasonable
+--enable-refresh
+
+# Bytes not Bites or whatever.  1024 not 1k etc.
+--no-si
+
+# I think this is the (recursive?) number of crap in folders?
+--show-itemcount
+
+# last modified
+--show-mtime
+
+# Who needs this when you can divide in your head and see the sweet graphics.
+--hide-percent
+
+# eighth-block because we got Kitty!!
+--graph-style eighth-block
+
+
+

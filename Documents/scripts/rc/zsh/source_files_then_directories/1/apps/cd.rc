@@ -1,6 +1,8 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
+
+
 need -v zoxide && {
 
   # z > cd

@@ -1,0 +1,61 @@
+#! /bin/zsh
+
+# rowdir="$(gmktemp -d)"
+tf="$(gmktemp)"
+# typedef -A row_map=()
+# for i in {1..500}; row_map+=([$i]=s)
+typeset -g -i lineCount=0
+typeset -g -a row_map=()
+for i in {1..500}; do  row_map+=(0); done
+tee "$tf" | while IFS= read -r line; do
+  # tf="$(gmktemp --temp-dir="$rowdir")"
+  # echo "${#line} $line"
+  lineCount=$((lineCount + 1))
+  for i in {1..${#line}}; do
+    if [ -z "${(c)line[$i]% }" ]; then
+      row_map[$i]=$((row_map[$i]+1))
+    fi
+  done
+done
+
+# echo $lineCount
+typeset -g -a blank_cols=()
+typeset -g -i k=1
+typeset -g -i rowMapLen=${#row_map[@]}
+
+
+while [ $k -le $rowMapLen ]; do
+  if [ ${row_map[$k]} -eq $lineCount ]; then
+    blank_cols+=($k)
+  fi
+  k=$((k+1))
+done
+
+print "$blank_cols[@]"
+
+# typeset -g -i lastMatchNdx=0
+# typeset -g -i rowMapLen=${#row_map[@]}
+# predictNdx=$((lastMatchNdx+1))
+#     if [ $k = $predictNdx ]; then
+#       :
+#     else
+#       blank_cols+=($k)
+#     fi
+#     lastMatchNdx=$k
+#   fi
+
+# printf '(%s)' "${blank_cols[@]}"
+
+
+#   for j in {1..500}; do
+#     # printf '%s ' "${row_map[$j]}"
+#     if [ ${row_map[$j]} -eq $lineCount ]; then
+#       printf '%s ' "$j"
+#     fi
+    
+#     # echo "${row_map[$i]}"
+#   done
+#   printf ')'
+# )
+
+# print "${blank_cols[@]}"

@@ -1,0 +1,7 @@
+alias ai='apt install -y' 
+
+apt update &&\
+apt upgrade -y &&\
+ai wget &&\
+wget https://download.jetbrains.com/toolbox/jetbrains-toolbox-1.24.12080.tar.gz &&\
+

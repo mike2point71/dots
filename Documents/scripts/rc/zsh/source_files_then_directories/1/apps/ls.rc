@@ -1,6 +1,15 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
+need -v lsd && {
+  function l(){
+    lsd -l
+  }
+  function la(){
+    lsd -la
+  }
+}
+
 need -v exa && {
 
   function x() {

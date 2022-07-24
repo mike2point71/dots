@@ -1,0 +1,11 @@
+#! /bin/sh
+# vim: set ft=sh:ts=2:et:
+
+long_one="$(gdate ${NANO_DATE_FORMAT:-'+%s.%N'})"
+
+case $1 in
+  s) echo ${long_one%.?????????} ;;
+  m) echo ${long_one%??????} ;;
+  u) echo ${long_one%???} ;;
+  *) echo $long_one ;;
+esac

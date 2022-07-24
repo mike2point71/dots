@@ -1,0 +1,21 @@
+#! /bin/zsh
+# vim: set ft=zsh:ts=2:et:
+font2do=$(fc-list  -b | grep fullname\: | hck -d \: -f 2 -- - | fzf | hck -d \" -f 2 -- -)
+paddings=('000' '00' '0' '' '' '' '' '')
+fc-match --format='%{charset}\n' "$font2do" |  while read -d ' ' glyphRange; do 
+ 
+#  printf "Today, we're gonna be like: %s  LOOKSLIKE: " ${glyphRange}
+ left=${glyphRange%-*}
+ if [ "$left" = "$glyphRange" ]; then
+   printf "U+%s%s" "$paddings[${#left}]" "${left:u}"
+ else
+   right=${glyphRange#*-}
+   printf "U+%s%s-U+%s%s" "$paddings[${#left}]" "${left:u}" "$paddings[${#right}]" "${right:u}" 
+ fi
+ printf " "
+
+
+
+done
+printf "\n" 
+print Full name: $font2do

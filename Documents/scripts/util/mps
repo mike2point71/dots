@@ -3,6 +3,9 @@
 
 
 handler='head'
+switches=(a x m)
+useO='-o'
+
 echo "Param count: $#"
 while [ $# -gt 0 ]; do
   case $1 in
@@ -19,13 +22,14 @@ while [ $# -gt 0 ]; do
       while [ ${#args} -gt 0 ]; do
         case ${args[1,1]} in
           a) handler='cat' ;;
-          s) handler-'aggregator' ;;
+          s) handler='aggregator' ;;
+          p) switches=(${switches:|(a x m)}); switches+=(p) ;;
+          x) switches='' ;;
           *) echo "I don't know what -${args[1,1]} means." ;;
         esac
         args=${args#?}
       done
     ;;
-  
   esac
   shift
 done
@@ -41,11 +45,11 @@ done
 
 
 
-cutoff=${cutoff:-15}
-
-sudo /bin/ps -axm -o pid,pmem,rss,cputime,ruid,ppid,ucomm | case $handler in
+psPrefs=${PS_PREFS:-pid,pmem,rss,cputime,ruser,ppid,ucomm,lstart}
+#  -o pid,pmem,rss,cputime,ruid,ppid,ucomm
+sudo /bin/ps -${(j..)switches} $useO $psPrefs | case $handler in
   'head')
-    head -n $cutoff
+    head -n ${cutoff:-15}
   ;;
   'cat')
     cat

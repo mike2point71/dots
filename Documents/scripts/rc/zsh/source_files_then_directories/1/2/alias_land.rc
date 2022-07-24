@@ -59,14 +59,19 @@ need -v px && {
   alias ptop='sudo ptop'
 }
 need "$HOME/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
-
 # Climate might be stupid?  Maybe I need to use it more...
 need climate && need_free -v c && alias c='climate'
 
 need -v quickserve && need_free -v qs && alias qs='quickserve'
 
 # Hex viewer
-need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
+# need xxd && need_free -v xd && alias xd='xxd -l 256 -c 16'
+need fx && {
+  need_free -v fxpq && alias fxpq='fx --print-code'
+  need_free -v fxpp && alias fxpp="{tee >(clip) | fx --print-code | gxargs -I %%%%% \$(jq '%%%%%' <(clip))} <"
+  need_free -v fxpc && alias fxpc="tee clip | fx --print-code | gxargs -I %%%%% \$(jq -rcMa --unbuffered '%%%%%' <clip)"
+  # need_free -v fxp && alias fxp="fx --print-code | gxargs -I %%%%% jq '%%%%%'"
+}
 need -v delta && alias ∂='delta'
 # need -v fzf && alias mf='fzf -m --ansi --tabstop=2 --black --preview="b {}"'
 
@@ -74,6 +79,13 @@ need ipython && need_free -v iii && alias iii='ipython --autocall=2'
 need -v python3 && {
   need_free -v p3 && alias p3='python3'
   need pip && alias pip='python3 -m pip'
+  alias saws='source ~/.saws/venv/bin/activate; saws'
+}
+
+alias dec2hex='gxargs -I %%%% echo "ibase=10;obase=16;%%%%" | bc'
+
+need -v rg && need_free -v scour && function scour(){
+  rg -uuu --ignore-case --no-config -M $((COLUMNS - 30)) --max-columns-preview -m 10 "$@" /
 }
 
 need emoji-fzf && need fzf && need_free -v efp && alias efp="emoji-fzf preview | fzf"
