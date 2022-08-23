@@ -5,7 +5,9 @@
 handler='head'
 switches=(a x m)
 useO='-o'
-
+exclaxm=(a x m)
+exclm=(m)
+pthing=''
 echo "Param count: $#"
 while [ $# -gt 0 ]; do
   case $1 in
@@ -14,7 +16,7 @@ while [ $# -gt 0 ]; do
       case $arg in
         all) handler='cat' ;;
         count=*) cutoff=${arg#count=};;
-        *) "I don't know what $arg means" ;;
+        *) "I don't know what $arg means"; exit 1 ;;
       esac
     ;;
     -*)
@@ -23,15 +25,21 @@ while [ $# -gt 0 ]; do
         case ${args[1,1]} in
           a) handler='cat' ;;
           s) handler='aggregator' ;;
-          p) switches=(${switches:|(a x m)}); switches+=(p) ;;
-          x) switches='' ;;
-          *) echo "I don't know what -${args[1,1]} means." ;;
+          p) 
+            switches=${switches:|exclaxm} 
+            shift
+            pthing="-p $1"
+            shift
+            ;;
+          # x) switches='' ;;
+          n) switches=${switches:|exclm} ;;
+          *) echo "I don't know what -${args[1,1]} means."; exit 2 ;;
         esac
         args=${args#?}
       done
     ;;
   esac
-  shift
+  [ $# -gt 0 ] && shift
 done
 
 
@@ -46,8 +54,13 @@ done
 
 
 psPrefs=${PS_PREFS:-pid,pmem,rss,cputime,ruser,ppid,ucomm,lstart}
+finalSwitches=''
+[ ${#switches} -gt 0 ] && finalSwitches=-${(j..)switches}
+print "Final switches: $finalSwitches"
 #  -o pid,pmem,rss,cputime,ruid,ppid,ucomm
-sudo /bin/ps -${(j..)switches} $useO $psPrefs | case $handler in
+putThis="$finalSwitches $pthing $useO $psPrefs"
+print "Going to call sudo /bin/ps $putThis"
+sudo /bin/ps $putThis | case $handler in
   'head')
     head -n ${cutoff:-15}
   ;;
