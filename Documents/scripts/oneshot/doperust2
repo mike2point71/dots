@@ -1,0 +1,9 @@
+--git https://github.com/ogham/dog.git dog dns-fuzz
+--git https://github.com/lotabout/rargs.git
+cargo-info
+cargo-play
+cargo-show
+cargo-update
+cargo-updater
+cargo-whatfeatures
+cargo-whatis

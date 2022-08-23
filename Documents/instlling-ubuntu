@@ -1,0 +1,88 @@
+sudo apt update && sudo apt upgrade -y
+alias ai="sudo apt install -y"
+ai ufw
+sudo ufw enable
+ai curl wget git 
+
+
+
+git clone git@github.com:mike2point71/dots.git $HOME/.dotfiles
+alias dtf='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+cd $HOME
+mkdir -p .config-backup && dtf checkout --recurse-submodules 2>&1 | egrep "\s+\." | awk {'print $1'} | xargs -I{} mv {} .config-backup/{}
+dtf checkout --recurse-submodules
+dtf config --local status.showUntrackedFiles no
+
+ai zsh 
+# RUST
+sudo apt install build-essential libssl-dev clang cmake
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+cargo install starship
+
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+mkdir -pv ~/Documents/bin
+unzip -d ~/Documents/bin/ awscliv2.zip;
+sudo ~/Documents/bin/aws/install
+aws configure sso
+
+# wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+# sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+# sudo apt install google-chrome-stable
+
+alias wg='wget --https --secure-protocol=TLSv1_3'
+chromebin=google-chrome-stable_current_amd64.deb
+wg https://dl.google.com/linux/direct/$chromebin && ai ./$chromebin && rm $chromebin
+
+
+#Python
+ai pip psutil rich
+
+#  MISC FAILED ATTEMPTS
+#chsh -s /usr/bin/zsh
+# m:x:1000:1000:m,,,:/home/m:/usr/bin/zsh
+# m:x:1000:1000:m:/home/m:/usr/bin/zsh
+# `chsh` and setting /bin/zsh seems to do the trick..
+
+sudo apt install zutty
+
+
+
+
+
+
+
+# Vitals
+sudo apt install gir1.2-gtop-2.0 lm-sensors
+sudo apt-get install chrome-gnome-shell
+
+# Quake Stlye
+sudo apt install xdotool
+
+# Node
+wg -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+
+#advcp&mv
+mkdir -p ~/Documents/bin && cd ~/Documents/bin && curl https://raw.githubusercontent.com/jarun/advcpmv/master/install.sh --create-dirs -o ./advcpmv/install.sh && (cd advcpmv && sh install.sh) && 
+
+# node
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+
+
+#Stream
+sudo apt-get install libssl-dev libavahi-compat-libdnssd-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-libav
+ 18 cd ~/Documents/                                                                                                                                                                       
+19 mkdir progs                                                                                                                                                                           
+20 progs                                                                                                                                                                                 
+21 git clone git@github.com:FDH2/UxPlay.git                                                                                                                                              
+22 UxPlay                                                                                                                                                                                
+23 mkdir build                                                                                                                                                                           
+24 cd build                                                                                                                                                                              
+25 cmake ..                                                                                                                                                                              
+26 sudo apt-get install libplist3                                                                                                                                                        
+27 cmake ..                                                                                                                                                                              
+28 sudo apt-get install libplist-dev                                                                                                                                                     
+29 sudo apt-get install libplist++-dev                                                                                                                                                   
+30 cmake ..        
+

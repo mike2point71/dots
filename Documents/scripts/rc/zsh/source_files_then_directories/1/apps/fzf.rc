@@ -3,16 +3,17 @@
 
 # Setup fzf
 # ---------
-if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
-  export PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
-fi
+#if [[ ! "$PATH" == */opt/homebrew/opt/fzf/bin* ]]; then
+#  export PATH="${PATH:+${PATH}:}/opt/homebrew/opt/fzf/bin"
+#fi
 
-# Auto-completion
-# ---------------
-# shellcheck source=/opt/homebrew/opt/fzf/shell/completion.zsh
-[[ $- == *i* ]] && source "/opt/homebrew/opt/fzf/shell/completion.zsh" 2> /dev/null
+possibilities=(
+/opt/homebrew/opt/fzf/shell/completion.zsh
+/opt/homebrew/opt/fzf/shell/key-bindings.zsh
+/usr/share/doc/fzf/examples/completion.zsh
+/usr/share/doc/fzf/examples/key-bindings.zsh
+)
+for p in $possibilities; do
+  [ -f "$p" ] && source $p
+done
 
-# Key bindings
-# ------------
-# shellcheck source=/opt/homebrew/opt/fzf/shell/key-bindings.zsh
-source "/opt/homebrew/opt/fzf/shell/key-bindings.zsh"

@@ -1,2 +1,2 @@
 bind status D !@?rm %(file)
-bind status <Ctrl-r> !sh -c "echo %(file) >> .gitignore"
+bind status <Ctrl-r> !sh -c "selectForGitIgnore %(file) >> .gitignore"

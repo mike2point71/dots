@@ -1,0 +1,7 @@
+#! /bin/sh
+
+alias ai="sudo apt install -y"
+ai ufw && sudo ufw enable || exit 99
+ai curl wget git zsh
+sudo needrestart
+

@@ -1,6 +1,8 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
+source $RC_FOLDER/local/aliases.zrc
+
 need ifconfig && need jc && need jq && need_free -v 'net-if' && alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
 need_free -v 'chrome' && alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123'
 
@@ -17,7 +19,7 @@ need_free -v 'gnom' && alias gnom="git remote show \$(git remote) | gawk '/HEAD 
 
 # Dotfiles config shortcuts
 need_free -v 'dtf' && alias dtf="git --git-dir=$HOME/.dotfiles --work-tree=$HOME"
-need -v lazygit && {
+need lazygit && {
   need_free -v 'ldtf' && alias ldtf="lazygit --git-dir=$HOME/.dotfiles --work-tree=$HOME"
 }
 need_free -v 'dtfs' && alias dtfs="git --git-dir=$HOME/.dotfiles --work-tree=$HOME status"
@@ -45,15 +47,15 @@ need_free -v 'mkd' && alias mkd='mkdir -pv'
 # alias mps='sudo ps -axo acflag,pid,ucomm,ruser,rgid,ppid,etime,time,utime,flags,state,pri,wq,wqb,wqr,xstat,args'
 # alias mps='sudo ps -amxo pid,ruser,rss,etime,time,utime,args | head -n10'
 
-need -v pps && alias pps='sudo pps'
-need -v procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
-need -v zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
-need -v glances && need_free -v 'mpg' && alias mpg='sudo glances'
-need -v htop && {
+need -v $MK_SCRIPTS/util/pps && alias pps='sudo $MK_SCRIPTS/util/pps'
+need procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
+need zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
+need glances && need_free -v 'mpg' && alias mpg='sudo glances'
+need htop && {
   need_free -v 'mtop' && alias mtop='sudo htop'
   alias htop='sudo htop'
 }
-need -v px && {
+need px && {
   need_free -v 'mpx' && alias mpx='sudo px'
   need_free -v 'mpxt' && alias mpxt='sudo px --top'
   alias ptop='sudo ptop'

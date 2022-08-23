@@ -1,0 +1,24 @@
+#! /bin/zsh
+
+fullText="$1"
+
+>&2 print "Given: ---$fullText---"
+
+# backwardsArray=("$fullText")
+
+splitters=(${(s|/|)fullText})
+joinedOptions=()
+
+
+for i in {1..${#splitters}}; do
+  partial=(${(@)splitters[1,$i]})
+  joined=${(j./.)partial}
+  joinedOptions+=($joined)
+  >&2 print "$i:  $joined"
+done
+
+
+addSlash='/'
+read -r choice
+if [ "$choice" = "${#joinedOptions}" ]; then addSlash=''; fi
+echo "${joinedOptions[$choice]}${addSlash}"

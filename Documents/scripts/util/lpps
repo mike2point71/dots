@@ -12,7 +12,7 @@ from time import time
 
 from math import log10, floor, pow
 
-from psutil._psosx import pmem
+from psutil._pslinux import pmem
 from rich.console import Console
 from rich.table import Table
 

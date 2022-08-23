@@ -1,9 +1,11 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
-need -v bat && {
+
+
+need -v $BATCMD && {
   # Replacing cat with bat and just need to use 'b'
   function b(){
-      bat --theme=ansi --style=full --paging=never --force-colorization "$*"
+      $BATCMD --theme=ansi --style=full --paging=never --force-colorization "$*"
   }
 }

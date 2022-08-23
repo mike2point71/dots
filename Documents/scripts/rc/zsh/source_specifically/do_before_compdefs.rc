@@ -73,14 +73,14 @@ source "$MK_SCRIPTS"/rc/modules/marlonrichert/zsh-autocomplete.plugin.zsh
 # Default
 # Up arrow:
 bindkey '\e[A' up-line-or-search
-bindkey '\eOA' up-line-or-search
+#bindkey '\eOA' up-line-or-search
 # up-line-or-search:  Open history menu.
 # up-line-or-history: Cycle to previous history line.
 
 # Default
 # Down arrow:
 bindkey '\e[B' down-line-or-select
-bindkey '\eOB' down-line-or-select
+#bindkey '\eOB' down-line-or-select
 # down-line-or-select:  Open completion menu.
 # down-line-or-history: Cycle to next history line.
 

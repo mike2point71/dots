@@ -7,32 +7,23 @@
 loud='loud'
 
 export MK_SCRIPTS="$DOCSFLDR/scripts"
-export LOCAL_RC_FOLDER="$MK_SCRIPTS"/rc/local
-export MODS_FOLDER="$MK_SCRIPTS"/rc/modules
-export ZSHRC_FOLDER="$MK_SCRIPTS"/rc/zsh
+export RC_FOLDER="$MK_SCRIPTS"/rc
+export LOCAL_RC_FOLDER="$RC_FOLDER"/local
+export MODS_FOLDER="$RC_FOLDER"/modules
+export ZSHRC_FOLDER="$RC_FOLDER"/zsh
 export NANO_DATE_FORMAT="+%s.%N"
 
-path_array=(
-  "$MK_SCRIPTS"/util
-  "$MK_SCRIPTS"/learning
-  "$DOCSFLDR"/bin
-  /opt/homebrew/opt/texinfo/bin
-  "$HOME"/.cargo/bin
-  "$HOME"/.sdkman/candidates/gradle/current/bin/
-  "$HOME"/bin
-  /opt/homebrew/opt/ruby/bin
-  /opt/homebrew/opt/python@3.9/Frameworks/Python.framework/Versions/3.9/bin
-  /opt/homebrew/opt/tcl-tk/bin
-  "$PATH"
-)
+source "$LOCAL_RC_FOLDER/path.zrc"
 
-export PATH=${(j.:.)path_array}
-
-export BREWPREFIX=$(brew --prefix)
-
+if 2>/dev/null which brew; then
+  export BREWPREFIX=$(brew --prefix)
+fi
 
 # echo $PATH
 
+function yellowMesasge(){
+  printf '\033[93;1m%s\033[0m' "$1"
+}
 
 function source_timed () {
   local file_or_dir2="$1"
@@ -46,7 +37,7 @@ function source_timed () {
     local elapsed=$((end_time - start_time))
     local elapsed_string="${elapsed:0:4}"
     if [ $(echo "$elapsed_string > 0.1" | bc) -eq 1 ] ; then
-      print "\033[93;1m...took ${elapsed_string} seconds\033[0m" 
+      yellowMesasge "...took ${elapsed_string} seconds" 
     fi
     printf '\n'
   fi
@@ -79,33 +70,23 @@ function source_R () {
   done
 }
 
-add2fpath=(
-  "$DOCSFLDR"/completions
-  /Users/m/.twilio-cli/autocomplete/functions/zsh
-  /opt/homebrew/share/zsh-completions
-  /opt/homebrew/completions/zsh/_zsh
-  /opt/homebrew/share/zsh/site-functions
-  $FPATH
-)
 
-export FPATH=${(j.:.)add2fpath}
 
 source_timed "$ZSHRC_FOLDER"/source_specifically/do_before_compdefs.rc
 
+# [ -d "$LOCAL_RC_FOLDER" ] && source_R "$LOCAL_RC_FOLDER"
+
 source_R "$ZSHRC_FOLDER"/source_files_then_directories
-
-[ -d "$LOCAL_RC_FOLDER" ] && source_R "$LOCAL_RC_FOLDER"
-
-source_timed "$ZSHRC_FOLDER"/source_specifically/do_last.rc
-
-# zpluggies="$ZSHRC_FOLDER"/source_specifically/random_zsh_plugins
 
 z_plugins=(clipboard auto-ls)
 
 for z_plugin in $z_plugins; do
-  [ -d "$MODS_FOLDER"/"$z_plugin" ] && source_timed "$MODS_FOLDER"/"$z_plugin"/"$z_plugin".plugin.zsh
+  findInDir="$MODS_FOLDER"/"$z_plugin"
+  [ -d "$findInDir" ] || findInDir="$MODS_FOLDER/ohmyzsh/plugins/$z_plugin"
+  { [ -d "$findInDir" ] && source_timed "$findInDir"/"$z_plugin".plugin.zsh; } || yellowMesasge "Cannot find $z_plugin"
 done
 
+source_timed "$ZSHRC_FOLDER"/source_specifically/do_last.rc
 
 
 

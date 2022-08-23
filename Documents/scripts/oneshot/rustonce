@@ -1,0 +1,15 @@
+#! /bin/zsh
+
+while read -r line; do
+  if sudo apt-get install -y $line; then
+    echo "$line installed via apt"
+  elif sudo snap install $line; then
+    echo "$line installed via snap"
+  elif cargo install --all-features $line; then
+    echo "$line installed via cargo with all features"
+  elif cargo install $line; then
+    echo "$line installed via cargo and no feats :("
+  else 
+    echo $line >>.botchedrusters
+  fi
+done </home/m/Documents/scripts/oneshot/doperust

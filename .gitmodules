@@ -7,3 +7,6 @@
 [submodule "Documents/scripts/rc/modules/auto-ls"]
 	path = Documents/scripts/rc/modules/auto-ls
 	url = git@github.com:desyncr/auto-ls.git
+[submodule "Documents/scripts/rc/modules/ohmyzsh"]
+	path = Documents/scripts/rc/modules/ohmyzsh
+	url = git@github.com:ohmyzsh/ohmyzsh.git

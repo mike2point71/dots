@@ -1,6 +1,6 @@
 #!/usr/bin/env zsh
 
-need -v navi && {
+need navi && {
 
   _navi_call() {
     local result="$(navi "$@" </dev/tty)"

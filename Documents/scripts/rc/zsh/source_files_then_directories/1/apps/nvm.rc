@@ -1,29 +1,43 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
-nvmsh="/opt/homebrew/opt/nvm/nvm.sh"
 export NVM_DIR="$HOME/.nvm"
 lazyLoadNvm(){
-  allTerms="$*"
-  firstTerm="${allTerms%% *}"
-  remainingTerms="${allTerms#* }"
+  print "Running deferred nvm startup"
+  firstTerm="$1"
+  remainingTerms=()
+  if [ $# -gt 1 ]; then
+    shift
+    remainingTerms=("$@")
+  fi
   unalias nvm
   unalias npm
   unalias node
   source "$nvmsh"
-  $firstTerm $remainingTerms
-}
-
-[ -r "$nvmsh" ] && {
-  alias nvm=lazyLoadNvm nvm
-  alias npm=lazyLoadNvm npm
-  alias node=lazyLoadNvm node
+  print "About to run:  $firstTerm ${remainingTerms[@]}"
+  $firstTerm "${remainingTerms[@]}"
 }
 
 
 
-nvmcompletions="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-{
-  [ -r "$nvmcompletions" ] && source "$nvmcompletions"
-} || echo "Failed to source completions: $nvmcompletions"
 
+if [ -d "/opt/homebrew" ]; then
+  export nvmsh="/opt/homebrew/opt/nvm/nvm.sh"
+
+  nvmcompletions="/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+  {
+    [ -r "$nvmcompletions" ] && source "$nvmcompletions"
+  } || echo "Failed to source completions: $nvmcompletions"
+else
+  export nvmsh="$NVM_DIR/nvm.sh"
+  [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+fi
+
+if [ -r "$nvmsh" ]; then
+  alias nvm='lazyLoadNvm nvm'
+  alias npm='lazyLoadNvm npm'
+  alias node='lazyLoadNvm node'
+else
+
+fi

@@ -51,7 +51,7 @@ function hellaMacho(){
 }
 
 function flyingCat(){
-  bat --force-colorization --theme=ansi --style=header,grid,full --line-range :300 "$param"
+  $BATCMD --force-colorization --theme=ansi --style=header,grid,full --line-range :300 "$param"
 }
 
 function soHexy(){
