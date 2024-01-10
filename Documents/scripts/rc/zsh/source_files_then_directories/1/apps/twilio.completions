@@ -1,3 +1,15 @@
 
-TWILIO_AC_ZSH_SETUP_PATH=/Users/m/.twilio-cli/autocomplete/zsh_setup && test -f $TWILIO_AC_ZSH_SETUP_PATH && source $TWILIO_AC_ZSH_SETUP_PATH; # twilio autocomplete setup
-
+TWILIO_AC_ZSH_SETUP_PATH=${TWILIO_AC_ZSH_SETUP_PATH:-$HOME/.twilio-cli/autocomplete/zsh_setup}
+if [ -f $TWILIO_AC_ZSH_SETUP_PATH ]; then
+  if [ -r $TWILIO_AC_ZSH_SETUP_PATH ]; then
+    if [ -x $TWILIO_AC_ZSH_SETUP_PATH ]; then
+      source $TWILIO_AC_ZSH_SETUP_PATH
+    else
+      >&2 echo "The file $TWILIO_AC_ZSH_SETUP_PATH is not executable. Please run 'chmod +x $TWILIO_AC_ZSH_SETUP_PATH' to fix this." 
+    fi
+  else
+    >&2 echo "The file $TWILIO_AC_ZSH_SETUP_PATH is not readable. Please run 'twilio autocomplete:cache' to fix this."
+  fi
+else
+  >&2 echo "The file $TWILIO_AC_ZSH_SETUP_PATH does not exist. Please run 'twilio autocomplete:cache' to fix this."
+fi

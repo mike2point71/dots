@@ -10,10 +10,10 @@ classic: false
 # layout.
 # Possible values: permission, user, group, size, size_value, date, name, inode
 blocks:
-  - permission
-  - user
+# - permission
+# - user
   - size
-  - date
+# - date
   - name
 
 # == Color ==
@@ -47,14 +47,14 @@ dereference: false
 # == Display ==
 # What items to display. Do not specify this for the default behavior.
 # Possible values: all, almost-all, directory-only
-# display: all
+display: almost-all
 
 # == Icons ==
 icons:
   # When to use icons.
   # When "classic" is set, this is set to "never".
   # Possible values: always, auto, never
-  when: auto
+  when: never
   # Which icon theme to use.
   # Possible values: fancy, unicode
   theme: fancy
@@ -90,7 +90,7 @@ recursion:
 # == Size ==
 # Specifies the format of the size column.
 # Possible values: default, short, bytes
-size: default
+size: bytes
 
 # == Permission ==
 # Specify the format of the permission column
@@ -132,4 +132,4 @@ symlink-arrow: ⇒
 # == Header ==
 # Whether to display block headers.
 # Possible values: false, true
-header: true
+header: false

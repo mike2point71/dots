@@ -1,10 +1,11 @@
 # NO SHEBANG BECAUSE THIS WILL BE SOURCED
 # vim: set ft=zsh:ts=2:et:
 
-source $RC_FOLDER/local/aliases.zrc
+localAliases="$RC_FOLDER/local/aliases.zrc"
+[ -r "$localAliases" ] && . "$localAliases"
 
 need ifconfig && need jc && need jq && need_free -v 'net-if' && alias net-if="ifconfig | jc --ifconfig | jq -r '.[] | .name'"
-need_free -v 'chrome' && alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123'
+need_free -v 'chrome' && alias chrome='/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9123 --user-data-dir=~/chrobecca'
 
 need jbang && {
   need_free -v 'jbc' && alias jbc='jbang -c'
@@ -52,13 +53,14 @@ need procs && need_free -v 'mpr' && alias mpr='sudo procs --pager disable '
 need zenith && need_free -v 'mpz' && alias mpz='sudo zenith'
 need glances && need_free -v 'mpg' && alias mpg='sudo glances'
 need htop && {
-  need_free -v 'mtop' && alias mtop='sudo htop'
-  alias htop='sudo htop'
+  # need_free -v 'mtop' && alias mtop='sudo htop'
+  alias htop='sudo /opt/homebrew/bin/htop'
 }
+need btop && alias btop='sudo /opt/homebrew/bin/btop'
 need px && {
-  need_free -v 'mpx' && alias mpx='sudo px'
-  need_free -v 'mpxt' && alias mpxt='sudo px --top'
-  alias ptop='sudo ptop'
+  need_free -v 'mpx' && alias mpx='sudo /opt/homebrew/bin/px'
+  need_free -v 'mpxt' && alias mpxt='sudo /opt/homebrew/bin/px --top'
+  alias ptop='sudo /opt/homebrew/bin/ptop'
 }
 need "$HOME/Documents/p/src/glances/ogogog.py" && need_free -v 'mgg' && alias mgg="sudo /Users/m/Documents/p/src/glances/ogogog.py"
 # Climate might be stupid?  Maybe I need to use it more...
@@ -91,6 +93,15 @@ need -v rg && need_free -v scour && function scour(){
 }
 
 need emoji-fzf && need fzf && need_free -v efp && alias efp="emoji-fzf preview | fzf"
+
+if [ "$TERM" = 'xterm-kitty' ]; then
+  alias ssh="kitty +kitten ssh"
+fi
+
+need_free -v aw && alias aw='sudo airport_wrapper -ty'
+need_free -v st && alias st='speedtest'
+need_free -v bu && alias bu='brew update && brew outdated --greedy | hck -f 1 | gxargs -n 1 brew upgrade --greedy'
+need_free -v ® && alias ®='fzf_dispatch'
 
 alias ...=../..
 alias ....=../../..

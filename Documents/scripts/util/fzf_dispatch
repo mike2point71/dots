@@ -61,6 +61,22 @@ function soHexy(){
   } | less -R
 }
 
+function browshLocalDispatch(){
+  if [ -x "$HOME"/Documents/scripts/util/browshlocal ]; then
+    "$HOME"/Documents/scripts/util/browshlocal "$param"
+  else
+    dispatchTo flyingCat
+  fi
+}
+
+function plistProcessor(){
+  plutil -convert json -o - "$param" | yq --prettyPrint
+}
+
+function yamlTime(){
+  yq --prettyPrint --colors "$param"
+}
+
 function directo(){
   exa --oneline --classify --tree --long --binary --header --modified --git --group-directories-first --sort=name --icons --color=always --color-scale --level=1 "$param" 
 }
@@ -82,6 +98,14 @@ function sqLiteStyle(){
   # termdbms -d sqlite -p "$(realpath "$param")"
 }
 
+function vimDispatch(){
+  vim "$(realpath "$param")"
+}
+
+function tarContents(){
+  tar -tvf "$(realpath "$param")"
+}
+
 function gettinVisiWithIt(){
   vd "$(realpath "$param")"
 }
@@ -95,26 +119,35 @@ function dispatchTo(){
 # fileAnswer=($(file -b "$param"))
 # fileAnswer1="${fileAnswer[1]}"
 shortMime=$(file -b --mime-type "$param" | head -1)
+fileAnswer="$(file -b "$param")"
 fileExtension="$param:e"
-
+[ "$optios[noise]" = 'loud' ] && {
+  printf 'shortMime: ***%s***\n' "$shortMime"
+  printf 'fileExtension: %s\n' "$fileExtension"
+  printf 'fileAnswer: %s\n' "$fileAnswer"
+  # printf 'fileAnswer1: %s\n' "$fileAnswer1"
+}
 case "$shortMime" in
   'text/plain')
     case "$fileExtension" in
       'md') dispatchTo markitdown;;
       *) dispatchTo flyingCat;; 
-    esac
-  ;;
+    esac;;
+  'application/json') dispatchTo yamlTime;;
   'inode/directory') dispatchTo directo;;
   'text/xml') dispatchTo flyingCat;;
+  'text/html') dispatchTo browshLocalDispatch;;
   'application/x-mach-binary') dispatchTo hellaMacho;;
-  'application/octet-stream') dispatchTo soHexy;;
+  'application/x-archive') dispatchTo tarContents;;
+  'application/octet-stream') 
+    case "$fileExtension" in
+      'plist') dispatchTo plistProcessor;;
+      *) dispatchTo soHexy;;
+    esac;;
+  'application/gzip') dispatchTo vimDispatch;;
   'application/vnd.sqlite3') dispatchTo sqLiteStyle;;
-   *) dispatchTo unknownShortMime;;
+   *) 
+     echo "Unknown Short MIME: $shortMime"
+     dispatchTo unknownShortMime;;
 esac  
 
-[ "$optios[noise]" = 'loud' ] && {
-  printf 'shortMime: ***%s***\n' "$shortMime"
-  printf 'fileExtension: %s\n' "$fileExtension"
-  # printf 'fileAnswer: %s\n' "$fileAnswer"
-  # printf 'fileAnswer1: %s\n' "$fileAnswer1"
-}

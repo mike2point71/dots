@@ -5,13 +5,14 @@
 
 #loud=$1
 loud='loud'
+export NANO_DATE_FORMAT="+%s.%N"
+big_start_time=$(gdate $NANO_DATE_FORMAT)
 
 export MK_SCRIPTS="$DOCSFLDR/scripts"
 export RC_FOLDER="$MK_SCRIPTS"/rc
 export LOCAL_RC_FOLDER="$RC_FOLDER"/local
 export MODS_FOLDER="$RC_FOLDER"/modules
 export ZSHRC_FOLDER="$RC_FOLDER"/zsh
-export NANO_DATE_FORMAT="+%s.%N"
 
 source "$LOCAL_RC_FOLDER/path.zrc"
 
@@ -28,15 +29,19 @@ function yellowMesasge(){
 function source_timed () {
   local file_or_dir2="$1"
   if [ "$loud" = 'loud' ]; then
-    local start_time=$(gdate $NANO_DATE_FORMAT)
+    local start_time
+    start_time=$(gdate $NANO_DATE_FORMAT)
     printf 'Sourcing:  %s' "${file_or_dir2#${ZSHRC_FOLDER}/}"
   fi
   source "$file_or_dir2"
   if [ "$loud" = 'loud' ]; then
-    local end_time=$(gdate $NANO_DATE_FORMAT)
+    local end_time
+    end_time=$(gdate $NANO_DATE_FORMAT)
     local elapsed=$((end_time - start_time))
     local elapsed_string="${elapsed:0:4}"
-    if [ $(echo "$elapsed_string > 0.1" | bc) -eq 1 ] ; then
+    typeset -i compare_elapsed
+    compare_elapsed=$(echo "$elapsed_string > 0.1" | bc)
+    if [ $compare_elapsed -eq 1 ] ; then
       yellowMesasge "...took ${elapsed_string} seconds" 
     fi
     printf '\n'
@@ -78,7 +83,7 @@ source_timed "$ZSHRC_FOLDER"/source_specifically/do_before_compdefs.rc
 
 source_R "$ZSHRC_FOLDER"/source_files_then_directories
 
-z_plugins=(clipboard auto-ls)
+z_plugins=(clipboard auto-ls pip redis-cli)
 
 for z_plugin in $z_plugins; do
   findInDir="$MODS_FOLDER"/"$z_plugin"
@@ -89,8 +94,10 @@ done
 source_timed "$ZSHRC_FOLDER"/source_specifically/do_last.rc
 
 
+big_end_time=$(gdate $NANO_DATE_FORMAT)
+big_elapsed=$((big_end_time - big_start_time))
 
-
+yellowMesasge "...took ${big_elapsed} seconds" 
 
 
 # The next line updates PATH for the Google Cloud SDK.

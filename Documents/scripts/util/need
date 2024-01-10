@@ -1,4 +1,4 @@
-#! /bin/zsh
+#!/usr/bin/env /bin/zsh
 # vim: set ft=zsh:ts=2:et:
 
 be_quiet='QUIET'
@@ -8,6 +8,8 @@ if [ "$1" = '-v' ]; then
 fi
 
 if >/dev/null type $1; then
+  exit 0
+elif alias | ggrep -ch $1; then
   exit 0
 else
   if [ "$be_quiet" = 'LOUD' ]; then

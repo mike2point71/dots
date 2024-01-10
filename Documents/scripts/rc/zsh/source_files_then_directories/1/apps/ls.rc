@@ -3,10 +3,10 @@
 
 need -v lsd && {
   function l(){
-    lsd -l
+    lsd -l "$@"
   }
   function la(){
-    lsd -la
+    lsd -la "$@"
   }
 }
 
